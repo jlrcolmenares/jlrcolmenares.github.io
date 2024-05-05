@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta itemprop="name" content="José Luis Colmenares" />
+  <meta itemprop="description" content="@jlrcolmenares blog" />
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://jlrcolmenares.github.io/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://jlrcolmenares.github.io/favicon-32x32.png" />
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="16x16"
+    href="https://jlrcolmenares.github.io/favicon-16x16.png"
+  />
+  <link
+    rel="shortcut icon"
+    href="https://jlrcolmenares.github.io/favicon.ico"
+  />
+  <link rel="stylesheet" href="https://jlrcolmenares.github.io/style.css"/>
+  
+  <title>The Data Engineer&#x27;s Guide to Apache Airflow</title>
+  
+
+  
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://jlrcolmenares.github.io/rss.xml">
+  
+
+  <body id="page">
+
+	
+<header id="site-header" class="animated slideInUp faster">
+  <div class="hdr-wrapper section-inner">
+    <div class="hdr-left">
+      <div class="site-branding">
+        <a href="https:&#x2F;&#x2F;jlrcolmenares.github.io&#x2F;">José Luis Colmenares</a>
+      </div>
+      <nav class="site-nav hide-in-mobile">
+            
+        
+        <a href="https://jlrcolmenares.github.io//posts">Posts</a>
+        
+        <a href="https://jlrcolmenares.github.io//about">About</a>
+        
+      </nav>
+    </div>
+    <div class="hdr-right hdr-icons">
+      <span class="hdr-social hide-in-mobile">
+        
+
+<a href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;jlrcolmenares&#x2F;" target="_blank" rel="noopener me"
+   title="linkedin">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+  
+</a>
+
+<a href="https:&#x2F;&#x2F;twitter.com&#x2F;jlrcolmenares" target="_blank" rel="noopener me"
+   title="twitter">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+  
+</a>
+
+<a href="https:&#x2F;&#x2F;github.com&#x2F;jlrcolmenares" target="_blank" rel="noopener me"
+   title="github">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+  
+</a>
+
+<a href="https:&#x2F;&#x2F;medium.com&#x2F;@jlrcolmenares" target="_blank" rel="noopener me"
+   title="medium">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.846 6.887c.03-.295-.083-.586-.303-.784l-2.24-2.7v-.403h6.958l5.378 11.795 4.728-11.795h6.633v.403l-1.916 1.837c-.165.126-.247.333-.213.538v13.498c-.034.204.048.411.213.537l1.871 1.837v.403h-9.412v-.403l1.939-1.882c.19-.19.19-.246.19-.537v-10.91l-5.389 13.688h-.728l-6.275-13.688v9.174c-.052.385.076.774.347 1.052l2.521 3.058v.404h-7.148v-.404l2.521-3.058c.27-.279.39-.67.325-1.052v-10.608z""></path></svg>
+  
+</a>
+
+<a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;@jlrcolmenares" target="_blank" rel="noopener me"
+   title="youtube">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+  
+</a>
+
+
+      </span>
+      <button id="menu-btn" class="hdr-btn" title="Menu">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-menu"
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div id="mobile-menu" class="animated fast">
+  <ul>
+    
+    <li><a href="https://jlrcolmenares.github.io//posts">Posts</a></li>
+    
+    <li><a href="https://jlrcolmenares.github.io//about">About</a></li>
+    
+  </ul>
+</div>
+
+	
+	
+
+		
+<main class="site-main section-inner animated fadeIn faster">
+  <article class="thin">
+	<header class="post-header">
+	  <div class="post-meta">
+		
+		<span>Mar 11, 2024</span>
+		<small> - 
+<span class="reading-time" title="Estimated read time">
+  
+  8 min read
+  
+</span>
+</small>
+		
+            
+	  </div>
+	  <h1>The Data Engineer&#x27;s Guide to Apache Airflow</h1>
+	</header>
+
+	<div class="content">
+        
+	  <div style="background-color: lightblue; padding: 2px; border-radius: 5px; display: flex; align-items: center;">  
+  <div style="flex: 0 0 24px; margin-right: 10px;">
+    <img src="/icons/info-icon.png" alt="Info" style="width: 100%; height: auto;">
+  </div>
+  <div style="flex: 1;">
+    <p>
+      This article was originally published in Medium.
+    </p>
+  </div>
+</div>
+<p>Apache Airflow <a href="https://medium.com/clarityai-engineering/the-data-engineers-guide-to-apache-airflow-a1bc876024ca">is a very popular platform to schedule data pipelines</a>. But what value are getting as Data Engineer when we choose to use this tools? In this article we're going to learn about this.</p>
+<p>When people talk about data specialists, I often find that there are a lot of doubts about the different profiles that that exists in the sector. For the sake of brevity I like to refer to this meme:</p>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div>
+        <figure>
+          <img src="&#x2F;images&#x2F;09_01_meme_data_eng.webp" width="560" height="315" alt=""/>
+          <figcaption style="text-align: center; font-style: italic; color: grey;"></figcaption>
+        </figure>
+      </div>
+</div>
+<p>Why our poor Data Engineer (from now on, DE) is so stressed? Many factors could be affecting him. Data is often chaotic, dirty, unorganized, ingestions change very easily and extractions could broke by many causes. Data pipelines are vulnerable by default.</p>
+<p>And what is worse that your pipeline fails? That no one knows it fail! So you business processes and decisions are taken with outdated or wrong data.</p>
+<p>Here is when it comes the need for a platform that allows us to achieve at least two things:</p>
+<ol>
+<li>Schedule our data pipelines.</li>
+<li>Inform us when they fail.</li>
+</ol>
+<p>This could be achieve by many ways, but Apache Airflow is in integrated tool that was build specifically for solve these and other problems inside a DE team.</p>
+<h2 id="apache-airflow"><a href="https://airflow.apache.org/">Apache Airflow</a></h2>
+<p>Apache Airflow is an open-source platform widely used in the data engineering field to schedule batch workflows. It was developed in 2015 by engineers from Airbnb, and later the Apache Foundation took over its development.</p>
+<p>This platform enables DE teams to create, schedule, and monitor batch data pipelines through the definition of DAGs (<a href="https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html">Directed Acyclic Graphs</a>) using Python.</p>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div>
+        <figure>
+          <img src="&#x2F;images&#x2F;09_02_airflow_example.webp" width="650" height="315" alt="Example of a DAG"/>
+          <figcaption style="text-align: center; font-style: italic; color: grey;">Example of a DAG</figcaption>
+        </figure>
+      </div>
+</div>
+<p>A DAG represents the collection of tasks that need to be run to process a raw batch of data. These tasks are organised in a way that the DAG reflects their relationships and dependencies. Each square in the image at the top represents a “task,” and each task could be a function or a set of functions in an ETL process.</p>
+<p>Data engineering (DE) teams find value in using Airflow in different ways, some of which are:</p>
+<ol>
+<li>Scheduling workflows: Airflow ensures that data processes run reliably when the conditions are met, usually by the usage of <a href="https://en.wikipedia.org/wiki/Cron#CRON_expression">CRON expressions</a>.</li>
+<li>Monitoring and alerting: Airflow can track the progress of workflows in real-time and send alerts if any issues arise.</li>
+<li>Promoting reusability and modularity: by allowing repetitive process to exist in the same environment, so they could be reused in many DAGs.</li>
+<li>Allowing scalability: Tasks that allow the processing of large data volumes can be organised in a way that scales to accommodate increasing data loads over time.</li>
+<li>Controlling dependencies: Airflow ensures that tasks are executed in the correct order based on their dependencies. This helps prevent data inconsistencies and ensures that downstream tasks only run when their prerequisites have been met.</li>
+<li>Facilitating visualization: Airflow provides a user-friendly interface for monitoring workflows, making it easier for DE to understand the structure and dependencies of their pipelines.</li>
+</ol>
+<p>For example, at <a href="https://clarity.ai/">ClarityAI</a>, our DE team uses DAGs for many tasks, some of which include:</p>
+<ul>
+<li>Ingesting data into our S3 buckets.</li>
+<li>Moving data from S3 buckets to our data warehouse.</li>
+<li>Joining data from different sources to create new datasets.</li>
+<li>Modifying raw data to comply with our internal schemas.</li>
+<li>Updating databases from different environments.</li>
+<li>Running validations over the data.</li>
+<li>Making data available to our final clients in the SaaS platform.</li>
+</ul>
+<p>Airflow is like a Swiss Army Knife, assisting us in many processes, and it can surely benefit you too once you start exploring its features. Since my intention is to demonstrate how to use this platform, I’d like to introduce you to a repository where you can test some of Airflow’s capabilities</p>
+<h2 id="airflow-dummy-repository">Airflow Dummy Repository</h2>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div>
+        <figure>
+          <img src="&#x2F;images&#x2F;09_03_airflow_dashboards.webp" width="650" height="315" alt="Airflow User Interface"/>
+          <figcaption style="text-align: center; font-style: italic; color: grey;">Airflow User Interface</figcaption>
+        </figure>
+      </div>
+</div>
+<p>In the second half of this post I like to present a situation where Airflow adds a lot of value to the daily process of a DE, while review some theoretical concepts of the platform</p>
+<p>Please, download this <a href="https://github.com/jlrcolmenares/airflow_director">repository</a>. Is going to be the boiler plate to run your first Airflow instance in local.</p>
+<p>You're going to be running <a href="https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html">Airflow in Docker</a>. The only pre-requisite that is needed in to have Docker compose installed.</p>
+<p>Clone the repo (or download it as a zip file) and run the following command <code>docker-compose airflow-init</code> to start the local database and <code>docker-compose up</code> to run the webserver.</p>
+<p>In <code>localhost:8080</code> you should see a login window. The default user/password for airflow in: <code>airflow/airflow</code>. Login and then you're going see a set of dags.</p>
+<h2 id="airflow-architecture">Airflow Architecture</h2>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div>
+        <figure>
+          <img src="&#x2F;images&#x2F;09_04_scheduler.webp" width="650" height="315" alt="Airflow Basic Architecture"/>
+          <figcaption style="text-align: center; font-style: italic; color: grey;">Airflow Basic Architecture</figcaption>
+        </figure>
+      </div>
+</div>
+<p>The image above show the basic <a href="https://airflow.apache.org/docs/apache-airflow/2.0.1/concepts.html">Airflow Architecture</a>, this a good starting point to understand what you're seeing in your device after you Airflow session was started.</p>
+<p>First, I want you to focus in the DE. In the infographic you could see that the DE interacts with Airflow through 3 different block</p>
+<ol>
+<li><strong>DAGs:</strong> containing Python code that represents a data pipeline.</li>
+<li><strong>User interface:</strong> That depends on the Webserver and if the UX that allow to monitor and manually trigger the DAGs.</li>
+<li><strong>Airflow.cfg:</strong> A file that contains the configuration of the environment. The official documentation is here <a href="https://airflow.apache.org/docs/apache-airflow/stable/configurations-ref.html">airflow.cfg file</a>.</li>
+</ol>
+<p>Since this tutorial works with a simplified environment, the airflow.cfg is &quot;embedded&quot; in the docker-compose file. In the &quot;x-airflow-common&quot; section are defined a series of environment variables that is going to be used across all the services brought up by the docker file.</p>
+<pre><code>x-airflow-common:
+  &amp;airflow-common
+  build: .
+  environment:
+    &amp;airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2:&#x2F;&#x2F;airflow:airflow@postgres&#x2F;airflow
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql:&#x2F;&#x2F;airflow:airflow@postgres&#x2F;airflow
+    AIRFLOW__CELERY__BROKER_URL: redis:&#x2F;&#x2F;:@redis:6379&#x2F;0
+    AIRFLOW__CORE__FERNET_KEY: &#x27;&#x27;
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: &#x27;true&#x27;
+    AIRFLOW__CORE__LOAD_EXAMPLES: &#x27;false&#x27;
+    AIRFLOW__API__ACCESS_CONTROL_ALLOW_HEADERS: &#x27;true&#x27;
+    AIRFLOW__API__AUTH_BACKENDS: &#x27;airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session&#x27;
+</code></pre>
+<p>We're not going to check this configuration in this article, but leave a comment at the end if you want to know more.</p>
+<p>After these environment variables, you could find the definition of the different server needed to airflow to exist. Let's comment them.</p>
+<ul>
+<li><strong>Metadata DB:</strong> Is an Postgres SQL database that store metadata about the all the DAGs being run, users and much more information.</li>
+<li><strong>Web Server:</strong> Is running a Flask web application under the hood, which communicates with the Airflow Metadata DB to retrieve and display information. It’s launched separately from the Airflow scheduler and worker(s) but is an integral part of the Airflow ecosystem,</li>
+<li><strong>Scheduler:</strong> Is the brain behind Airflow, it monitor all tasks and DAGs and triggers task once this dependencies are complete. It is designed to run as a persistent service and it is also configured by airflow.cfg.</li>
+<li><strong>Executor:</strong> Are mechanism by which task instances get run. Airflow support many executor, in productive environment we mostly use KubernetExecutor but <a href="https://airflow.apache.org/docs/apache-airflow/2.0.1/executor/index.html">there are many more</a>.</li>
+<li><strong>Worker:</strong> Are separated instances which job into run specific task inside a Airflow.</li>
+</ul>
+<p>Good, keep this in mind. Because now we're going to see how everything work inside with a DAG.</p>
+<h2 id="putting-theory-into-work-your-first-dag">Putting theory into work. Your first DAG</h2>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div>
+        <figure>
+          <img src="&#x2F;images&#x2F;09_05_example_dag.webp" width="650" height="315" alt="A very simple DAG"/>
+          <figcaption style="text-align: center; font-style: italic; color: grey;">A very simple DAG</figcaption>
+        </figure>
+      </div>
+</div>
+<p>In this section we're going to be commenting the code of a DAG and see what is happening every time we trigger it.</p>
+<pre data-lang="python" class="language-python "><code class="language-python" data-lang="python">from datetime import datetime
+from airflow import DAG
+from airflow.operators.dummy import DummyOperator
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import BranchPythonOperator, PythonOperator
+from airflow.utils.trigger_rule import TriggerRule
+from airflow.models import TaskInstance
+import random
+
+def branch_decision(**context):
+    &quot;&quot;&quot;Randomly choose between success (True) and failure (False).&quot;&quot;&quot;
+    return &#x27;success_task&#x27; if random.choice([True, False]) else &#x27;failure_task&#x27;
+
+def notify_outcome(ti: TaskInstance, **context):
+    &quot;&quot;&quot;Log the notification message using the default logger.&quot;&quot;&quot;
+    outcome = ti.xcom_pull(task_ids=&#x27;branch_decision&#x27;)
+    if outcome == &#x27;success_task&#x27;:
+        notification_message = &#x27;Success: The operation was successful.&#x27;
+    else:
+        notification_message = &#x27;Failure: The operation failed.&#x27;
+    ti.log.info(notification_message)
+    return notification_message
+
+# PART 1. Definition of the DAG
+with DAG(
+    dag_id=&#x27;example_data_analysis_dag&#x27;,
+    start_date=datetime(2024,3,5),
+    default_args={
+        &#x27;owner&#x27;: &#x27;airflow&#x27;,
+    },
+    description=&#x27;A DAG for data analysis with dynamic notification based on outcome&#x27;,
+    schedule_interval=&quot;@daily&quot;,
+    catchup=False,
+    tags=[&#x27;data-analysis&#x27;],
+) as dag:
+
+    # PART 2. Definition of the tasks
+    start = DummyOperator(task_id=&#x27;start&#x27;)
+
+    data_analysis = BranchPythonOperator(
+        task_id=&#x27;branch_decision&#x27;,
+        python_callable=branch_decision,
+    )
+
+    success_task = BashOperator(
+        task_id=&#x27;success_task&#x27;,
+        bash_command=&#x27;echo &quot;Operation succeeded.&quot;&#x27;,
+    )
+
+    failure_task = BashOperator(
+        task_id=&#x27;failure_task&#x27;,
+        bash_command=&#x27;echo &quot;Operation failed.&quot; &amp;&amp; exit 1&#x27;,
+    )
+
+    notification_task = PythonOperator(
+        task_id=&#x27;notification_task&#x27;,
+        python_callable=notify_outcome,
+        trigger_rule=TriggerRule.DUMMY
+    )
+
+    # PART 3. Definition of the Workflow
+    start &gt;&gt; data_analysis &gt;&gt; [success_task, failure_task]
+    [success_task, failure_task] &gt;&gt; notification_task
+</code></pre>
+<h3 id="part-1-definition-of-the-dag">PART 1. Definition of the DAG</h3>
+<p>The first part we're going to focus is <a href="https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html">the definition of the DAG</a>. It start with the DAG object. Any DAG should have at least 3 elements: an unique identifier (dag_id), an schedule and an start_date.</p>
+<p>The 'schedule' argument is <a href="https://airflow.apache.org/docs/apache-airflow/1.10.1/scheduler.html">where we define expression</a> to indicate when the DAG is triggered. DAGs are triggered each time that the schedule conditions are met and Airflow create an unique 'dag_runid' to associate and store event that occurred in an execution.</p>
+<h3 id="part-2-definition-of-the-tasks">PART 2. Definition of the tasks</h3>
+<p>To define elements of a task Airflow have defined <a href="https://airflow.apache.org/docs/apache-airflow/stable/howto/operator/index.html">a series of Operators</a>: elements that could be used to call functions. Some of the most common ones are the Python, Bash and Kubernetes Operator.</p>
+<p>In this case, the <code>data_analysis</code> object is a PythonOperator that calls the <code>branch_decision</code> function.</p>
+<p>Task can talk between thenselves thank to <a href="https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/xcoms.html">cross-communication (XComs)</a>. In this DAG, the 'notify_outcome function' capture the return value of the branc_decision task. This value is automatically stored in XCom under the task’s ID and used to send different notification messages.</p>
+<h3 id="part-3-workflow-definition">PART 3. Workflow Definition</h3>
+<p>To defines the dependencies between tasks, Airflow uses what is called <a href="https://airflow.apache.org/docs/apache-airflow/stable/tutorial/fundamentals.html#example-pipeline-definition">Bitshift Composition</a>. This is the usage of &gt;&gt;to indicate how task should be triggered.</p>
+<p>But the relationship between task could also be much more alternative with <a href="https://airflow.apache.org/docs/apache-airflow/stable/tutorial/fundamentals.html#example-pipeline-definition">the usage of TriggerRules</a>. The default rule is 'all_success', but in this case the DUMMY rule is setted, so notification_task is triggered whatever happens before.</p>
+<h2 id="when-triggering-a-dag">When triggering a DAG</h2>
+<p>When the DAG is triggered, the Airflow scheduler places it on the queue for execution, and then workers are assigned to execute each task within the DAG.</p>
+<p>The execution begins with the <code>start</code> task, a <code>DummyOperator</code> that essentially acts as a placeholder marking the beginning. Following this, the <code>branch_decision</code> task, a <code>BranchPythonOperator</code>, randomly selects between <code>success_task</code> and <code>failure_task</code> based on its internal logic, automatically pushing its decision to XCom.</p>
+<p>Based on this decision, the workflow continues to either of the aforementioned task. Both of these tasks are <code>BashOperators</code> executing simple echo commands, with <code>failure_task</code> designed to exit with a non-zero status to simulate a failure.</p>
+<p>After either of these tasks completes, the <code>notification_task</code> (a <code>PythonOperator</code>) is executed, which pulls the outcome of the <code>branch_decision</code> task from XCom and logs a corresponding success or failure message.</p>
+<p>Throughout this process, Airflow manages task dependencies, execution order, and the passing of contextual information (like XCom values) between tasks.</p>
+<p>All the information about this runs is stored in the Postgres DB and could be accessed querying directly or using a REST API that Airflow provides.</p>
+<h2 id="wrapping-up">Wrapping Up</h2>
+<p>Before we end, I wanted to share a bit about what we’ve covered. Originally, I had plans to dive into more ways we can use Apache Airflow, like triggering data pipelines with the output of other DAGs or dynamically creating tasks based on input arguments to a DAG. But for now, I thought it best to keep things straightforward.</p>
+<p>Airflow is one of the tools, but not the only tool, that we use on a day-to-day basis to solve problems in the data engineering office. At ClarityAI, we like to see ourselves as product engineers. Every day, we focus more on building software solutions to allow our internal clients to find value in the data that we manage and ingest.</p>
+<p>If you found this helpful, please give it a thumbs up and share it with others. Your feedback will help me decide if I should dive deeper into this topic in the future.</p>
+<p>Thanks for joining me on this journey. Until next time!</p>
+
+	</div>
+	<hr class="post-end">
+	<footer class="post-info">
+    
+	  <p>
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+		
+		
+		<span class="tag"><a href="https://jlrcolmenares.github.io/tags/data/">data</a></span>
+		
+		<span class="tag"><a href="https://jlrcolmenares.github.io/tags/airflow/">airflow</a></span>
+		
+		
+    </p>
+    
+    <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2138 Words</p>
+    
+    <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2024-03-11</p>
+    
+	</footer>
+  </article>
+    
+  
+  <div class="post-nav thin">
+	
+	
+  </div>
+
+  
+</main>
+
+	  </div>
+	  
+	  
+
+
+
+<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+  <p>&copy; 2024 <a href="https:&#x2F;&#x2F;jlrcolmenares.github.io&#x2F;">JLR</a></p>
+  <p>Made with <a href="https://www.getzola.org" target="_blank" rel="noopener">Zola</a>
+	
+	&#183; <a href="https://jlrcolmenares.github.io/rss.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+	
+  </p>
+</footer>
+
+
+
+
+	</div>
+	
+	<script src="https://jlrcolmenares.github.io/js/main.js"></script>
+
+	<!-- Math rendering -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, { delimiters: [ {left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}, {left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false}]});"></script>
+
+    
+		<link href="https://unpkg.com/highlightjs-badge/highlightjs/styles/railscasts.css" rel="stylesheet">
+		<!-- https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.1/build/styles/  for min version -->
+		<script src="https://unpkg.com/highlightjs-badge/highlightjs/highlight.pack.js"></script>
+		<script src="https://unpkg.com/highlightjs-badge/highlightjs-badge.min.js"></script>
+		<script>
+			var pres = document.querySelectorAll("pre>code");
+			for (var i = 0; i < pres.length; i++) {
+				hljs.highlightBlock(pres[i]);
+			}
+		</script>
+		
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+			<script>
+				var options = {
+					copyIconClass: "gg-clipboard",
+					checkIconClass: "gg-check"
+				};
+				window.highlightJsBadge(options);
+			</script>
+		
+
+	
+
+	
+	<script src="https://jlrcolmenares.github.io/js/main.js"></script>
+
+    
+    
+
+	
+    <!-- Global Site Tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4XXXXXXX-X"></script>
+    <script>
+     window.dataLayer = window.dataLayer || [];
+     function gtag(){dataLayer.push(arguments);}
+     gtag('js', new Date());
+     gtag('config', 'UA-4XXXXXXX-X');
+    </script>
+    
+  </body>
+</html>

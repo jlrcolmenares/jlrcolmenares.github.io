@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta itemprop="name" content="José Luis Colmenares" />
+  <meta itemprop="description" content="@jlrcolmenares blog" />
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://jlrcolmenares.github.io/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://jlrcolmenares.github.io/favicon-32x32.png" />
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="16x16"
+    href="https://jlrcolmenares.github.io/favicon-16x16.png"
+  />
+  <link
+    rel="shortcut icon"
+    href="https://jlrcolmenares.github.io/favicon.ico"
+  />
+  <link rel="stylesheet" href="https://jlrcolmenares.github.io/style.css"/>
+  
+  <title>Construyendo un Dashboard con Grafana</title>
+  
+
+  
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://jlrcolmenares.github.io/rss.xml">
+  
+
+  <body id="page">
+
+	
+<header id="site-header" class="animated slideInUp faster">
+  <div class="hdr-wrapper section-inner">
+    <div class="hdr-left">
+      <div class="site-branding">
+        <a href="https:&#x2F;&#x2F;jlrcolmenares.github.io&#x2F;">José Luis Colmenares</a>
+      </div>
+      <nav class="site-nav hide-in-mobile">
+            
+        
+        <a href="https://jlrcolmenares.github.io//posts">Posts</a>
+        
+        <a href="https://jlrcolmenares.github.io//about">About</a>
+        
+      </nav>
+    </div>
+    <div class="hdr-right hdr-icons">
+      <span class="hdr-social hide-in-mobile">
+        
+
+<a href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;jlrcolmenares&#x2F;" target="_blank" rel="noopener me"
+   title="linkedin">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+  
+</a>
+
+<a href="https:&#x2F;&#x2F;twitter.com&#x2F;jlrcolmenares" target="_blank" rel="noopener me"
+   title="twitter">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+  
+</a>
+
+<a href="https:&#x2F;&#x2F;github.com&#x2F;jlrcolmenares" target="_blank" rel="noopener me"
+   title="github">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+  
+</a>
+
+<a href="https:&#x2F;&#x2F;medium.com&#x2F;@jlrcolmenares" target="_blank" rel="noopener me"
+   title="medium">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.846 6.887c.03-.295-.083-.586-.303-.784l-2.24-2.7v-.403h6.958l5.378 11.795 4.728-11.795h6.633v.403l-1.916 1.837c-.165.126-.247.333-.213.538v13.498c-.034.204.048.411.213.537l1.871 1.837v.403h-9.412v-.403l1.939-1.882c.19-.19.19-.246.19-.537v-10.91l-5.389 13.688h-.728l-6.275-13.688v9.174c-.052.385.076.774.347 1.052l2.521 3.058v.404h-7.148v-.404l2.521-3.058c.27-.279.39-.67.325-1.052v-10.608z""></path></svg>
+  
+</a>
+
+<a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;@jlrcolmenares" target="_blank" rel="noopener me"
+   title="youtube">
+  
+  <svg xmlns="http://www.w3.org/2000/svg" class="feather" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+  
+</a>
+
+
+      </span>
+      <button id="menu-btn" class="hdr-btn" title="Menu">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-menu"
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div id="mobile-menu" class="animated fast">
+  <ul>
+    
+    <li><a href="https://jlrcolmenares.github.io//posts">Posts</a></li>
+    
+    <li><a href="https://jlrcolmenares.github.io//about">About</a></li>
+    
+  </ul>
+</div>
+
+	
+	
+
+		
+<main class="site-main section-inner animated fadeIn faster">
+  <article class="thin">
+	<header class="post-header">
+	  <div class="post-meta">
+		
+		<span>Jun 22, 2020</span>
+		<small> - 
+<span class="reading-time" title="Estimated read time">
+  
+  9 min read
+  
+</span>
+</small>
+		
+            
+	  </div>
+	  <h1>Construyendo un Dashboard con Grafana</h1>
+	</header>
+
+	<div class="content">
+        
+	  <div style="background-color: lightblue; padding: 2px; border-radius: 5px; display: flex; align-items: center;">  
+  <div style="flex: 0 0 24px; margin-right: 10px;">
+    <img src="/icons/info-icon.png" alt="Info" style="width: 100%; height: auto;">
+  </div>
+  <div style="flex: 1;">
+    <p>
+      Artículo publicado originalmente en mi antiguo blog de WordPress.
+    </p>
+  </div>
+</div>
+<p>En <a href="https://joseluisramoncolmenares.wordpress.com/2020/06/22/dashboard-con-grafana-y-docker-parte-1/">este artículo</a> daré una explicación extensa de un proyecto que desarrollé para la <em>Infraestructura Avanzada de Redes de Sensores</em>, una de las materias del máster sobre Smart Cities que realicé en Sevilla en 2020. Aquí la versión en vídeo:</p>
+<div  style="display: flex; justify-content: center;">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/UO6tl2n1UvE?si=SI6lS7oNImGKEi60" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>   
+</div>
+
+<h2 id="0-planteamiento-del-problema">0. Planteamiento del Problema</h2>
+<p>En el proyecto final para la materia se nos planteó el siguiente problema: </p>
+<blockquote>
+<p><em>Se requiere diseñar una red de contadores de agua. En este caso, la red es muy homogénea. Una vez definido un contador tienes definidos todos los nodos. Así que, en este caso, la problemática que tienes que trabajar es la cantidad de elementos. Cuando simules la red, debes resolver cómo lo vas a hacer el registro para una cantidad elevada de elementos (usando las formas normales explicadas en bases de datos) y cómo harás el mostrado de datos, que permita tener medidas específicas de un contador, así como datos acumulados para una barriada/ciudad entera.</em></p>
+</blockquote>
+<h2 id="1-consideraciones-iniciales">1. Consideraciones Iniciales</h2>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div>
+        <figure>
+          <img src="&#x2F;images&#x2F;05_01_sistemas_inteligente_red.jpg" width="560" height="315" alt="Figura 1. Topología de una Red Insteligente de Sensores"/>
+          <figcaption style="text-align: center; font-style: italic; color: grey;">Figura 1. Topología de una Red Insteligente de Sensores</figcaption>
+        </figure>
+      </div>
+</div>
+<p>En la Figura 1 se observa un ejemplos de cómo se implementa una red inteligente de agua. En dicho ejemplo, se observa que esta red le permite a la empresa de distribución de agua realizar la medición de los medidores de agua ubicados en esa ciudad. Para ello, se utilizan diversas redes de comunicación, como fibra óptica o GPRS.</p>
+<p>El objetivo es diseñar un sistema similar al presentado en la Figura 1. Profundizando en el tipo en los sensores, redes y protocolos. Generando a su vez una simulación que permita observar como se comportaría el sistema.</p>
+<h3 id="1-1-instrumentos-de-medicion-de-agua">1.1. Instrumentos de Medicion de Agua</h3>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div>
+        <figure>
+          <img src="&#x2F;images&#x2F;05_02_contadores_emivasa.jpg" width="380" height="150" alt="Figura 2. Cuadro de contadores en una residencia"/>
+          <figcaption style="text-align: center; font-style: italic; color: grey;">Figura 2. Cuadro de contadores en una residencia</figcaption>
+        </figure>
+      </div>
+</div>
+<p>Por normal general, los contadores de agua deben estar ubicados a nivel de la calle, de forma que la empresa encargada de la medición del agua pueda tomar sus medidas sin necesidad de acceder a los pisos. En el caso de edificios residenciales, los contadores de agua usualmente están ubicados en un cuarto de servicios, distribuido por medio de baterías que permiten organizar y hacer accesibles todos los contadores de cada unidad residencial desde un mismo lugar, como se muestra en la Figura 2. En dicha Figura también se observa la forma tradicional en la que se realiza la medición: por medio de un operador contratado por la empresa, cuya función era ir mensualmente, residencia por residencia, tomando nota de la medida de cada uno de los contadores.</p>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div>
+        <figure>
+          <img src="&#x2F;images&#x2F;05_03_contador_de_agua.jpg" width="560" height="315" alt="Figura 3. Contador de agua para telemedición"/>
+          <figcaption style="text-align: center; font-style: italic; color: grey;">Figura 3. Contador de agua para telemedición</figcaption>
+        </figure>
+      </div>
+</div>
+<p>Los contadores de agua residencial usualmente están hechos en bronce, internamente tiene un mecanismo que rota cuando el agua pasa a través de él. Suelen ser contadores volumétricos, es decir, que una vuelta del embolo interior representa un volumen de líquido específico. La rotación del émbolo activa a su vez un suiche reed, en donde cada pulso del suiche corresponde a una cantidad precisa de litros de agua.</p>
+<p>La pieza plástica que está adosada encima del contador en la Figura 3 tiene tantos los mecanismos para la lectura en sitio, es decir, los números rotativos, como el suiche reed con su mecanismo de transmisión. En la Figura también se observa un cable el cual llevaría la información del contador a un bus me medición, como los puede ser M-bus, Modbus, etc (Se hacen a medida).</p>
+<h3 id="1-2-antecendentes">1.2. Antecendentes</h3>
+<p>Antes de empezar el desarrollo de este trabajo es importante repasar algunos proyectos sobre redes inteligentes de agua se ha realizado en la última década en España, por ejemplo:</p>
+<p>El grupo Agua de Valencia indica que desde 2012 tiene implementado un sistema de Telegestión de Agua. En un vídeo, indican que su topología es la siguiente:</p>
+<ul>
+<li>En el punto más exterior de su red tienen a los contadores inteligentes, los cuales se conectan entre sí por medio de un bus. Este bus lleva sus lecturas a un concentrador. Estas lecturas se envían semanalmente a centro de medición por medio de radio.</li>
+<li>La empresa Acciona, a la cual hice referencia anteriormente habla aquí acerca de su proyecto conjunto con Aguas de Burgos, cuay información extendida puede verse en la Figura 1. 
+Adicional a esto, el Estado Español aprobó una ley en la cual indica que todos los contadores de agua con más de 12 años de antigüedad tienen 5 años para renovarse. Esto indica que la pertinencia en el desarrollo de este proyecto es más que necesaria actualmente. Más información al respecto aquí.</li>
+</ul>
+<h2 id="2-diseno-de-sistema">2. Diseño de Sistema</h2>
+<h3 id="2-1-instrumentacion">2.1. Instrumentacion</h3>
+<p>En el mercado europeo existen múltiples fabricantes de contadores de agua, por lo que se disponen de muchas opciones con prestaciones similares. Para este proyecto se ha seleccionado un contador marca Abering, modelo WS de chorro múltiple, pre equipado para tele medición. En la Figura 3 se observa el contador seleccionado.</p>
+<h3 id="2-2-comunicacion">2.2. Comunicacion</h3>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div>
+        <figure>
+          <img src="&#x2F;images&#x2F;05_04_mbus_simple_network.jpeg" width="560" height="315" alt="Figura 4. Topología MBus"/>
+          <figcaption style="text-align: center; font-style: italic; color: grey;">Figura 4. Topología MBus</figcaption>
+        </figure>
+      </div>
+</div>
+<p>En la Figura 4 se observa la topología que usualmente se utiliza para realizar la tele-medición de los contadores de una residencia de varios pisos. Puede observarse como los medidores se conectan entre si por medio de un bus (en ese caso M-bus). Luego, esa señal llega a un maestro que se encarga de concentrar las mediciones de todos los sensores. Este módulo maestro puede tener capacidad GSM, y enviar a la empresa de gestión de agua toda la información de los contadores conectados al bus por medio de GPRS o RS232, como se muestra en la Figura.</p>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div>
+        <figure>
+          <img src="&#x2F;images&#x2F;05_05_lorawan_network.png" width="560" height="315" alt="Figura 5. Topología LoRaWan"/>
+          <figcaption style="text-align: center; font-style: italic; color: grey;">Figura 5. Topología LoRaWan</figcaption>
+        </figure>
+      </div>
+</div>
+<p>Una alternativa para el sistema alámbrico de medición es hacerlo por medio de una red inalámbrica, por ejemplo, LoRaWan. En la Figura 5, se observa como la topología que sigue la red es equivalente a la que se tenía en la Figura 4, ya que las mediciones de varios sensores se unen en un concentrador. Luego de que son agrupadas, se transmiten a un centro de datos para su análisis.</p>
+<p>Sabiendo entonces que se tienen soluciones equivalentes para el mismo problema, se realizó un análisis para determinar cuál de los dos protocolos se utilizaría para construir la red de tele medición.</p>
+<h3 id="3-seleccion-de-red-de-comunicaciones">3. Selección de Red de Comunicaciones</h3>
+<p>En la sección anterior se indicó que el costo de los contadores era un costo fijo, ya que casi todos los contadores residenciales disponibles en España tienen un costo aproximado de 35 euros. Los costos variables dentro del proyecto serán aquellos relacionados con los elementos que se necesitan para implementar la red de comunicación</p>
+<ul>
+<li><strong>Opcion 1: Solución M-Bus</strong></li>
+</ul>
+<p>Para la solución basada en M-bus se consideró utilizar <a href="https://www.novaut.com/es/decode/367349-mm20-24-decode.html">el concentrador M-Bus Marca Decode, Modelo MM20-GSM</a>.  El cual realiza lecturas de hasta 20 esclavos M-bus. En Sevilla la mayoría de las residencias tiene menos de 20 pisos, por lo tanto, este concentrador permitiría agrupar los medidores de agua de un edificio. Lo cual es muy bueno al momento de sectorizar las mediciones.</p>
+<p>Dentro de sus prestaciones más interesantes está la posibilidad de realizar la configuración de los mensajes que se enviarán vía GSM por medio de una interfaz de usuario. Esto permite configurar el mensaje SMS únicamente con la información de mayor utilidad para la empresa de distribución.</p>
+<ul>
+<li><strong>Opcion 2: Solución LoRaWan</strong></li>
+</ul>
+<p>Para la solución basada en LoRaWan tiene que adosar un módulo de transmisión LoRa al medidor de agua. Esto hace que su precio sea ligeramente superior al medidor que tiene un módulo M-bus. Se profundizará en esto al final de esta sección.</p>
+<p>Los concentradores LoRaWan permiten trabajar con muchos más dispositivos que los que los M-bus. Por ejemplo, <a href="https://ursalink.eu/wp-content/uploads/2019/04/FC_UG87-Gateway-2019.pdf">el concentrador Marca Ursalink, Modelo UG87</a>, puede trabajar hasta con 2000 dispositivos LoRaWan. Esto reduce en gran medida la cantidad de concentradores necesarios para implementar la red. Sin embargo, requiere de una instalación más complicada, ya que los lectores LoRaWan debería tener línea directa con el concentrador.</p>
+<h2 id="4-estimacion-de-costos">4. Estimación de Costos</h2>
+<p>Para poder estimar el costo de la red se decidió limitar geográficamente el área que se quería atender en esta primera etapa. Para ello fue planteada la siguiente pregunta</p>
+<blockquote>
+<p>¿Cuánto me costaría implementar un sistema de tele medición de agua en el Barrio de Triana en Sevilla?</p>
+</blockquote>
+<p>En primer lugar, se quería confirmar si el alcance de los concentradores LoRaWan podría cubrir la zona de Triana. Las especificaciones del concentrador considerado dicen que tiene un alcance de hasta 11km, considerando que los edificios del barrio están contenidos en un área menor a 1.87km² se puede calcular que 1 concentrador es más que suficiente.</p>
+<p>Sin embargo, la cantidad de habitantes en Triana es de aproximadamente 49mil personas. Hacer el cálculo de como dividir esas personas en unidades habitacionales, tiendas y bares y demás establecimientos que consumen agua escapa al alcance de este proyecto. Para simplificar decidimos estimar la cantidad de medidores en el área dada a unos 15mil.</p>
+<ul>
+<li><strong>Opcion 1: Solución M-Bus + GSM</strong></li>
+</ul>
+<table><thead><tr><th style="text-align: left">Elemento</th><th style="text-align: left">Unidades</th><th style="text-align: right">Costo Unitario</th><th style="text-align: right">Subtotal</th></tr></thead><tbody>
+<tr><td style="text-align: left">Medidor de agua +<br>Adaptador MeterBus cableado</td><td style="text-align: left">15k</td><td style="text-align: right">38.00 €</td><td style="text-align: right">570000.00 €</td></tr>
+<tr><td style="text-align: left">Concentrador M-bus.<br>Marca Decode (Unds = 15k / 20)</td><td style="text-align: left">750</td><td style="text-align: right">232.00 €</td><td style="text-align: right">174000.00 €</td></tr>
+<tr><td style="text-align: left">Interconexión / Instalación /<br>Contrato GSM</td><td style="text-align: left">15k</td><td style="text-align: right">20.00 €</td><td style="text-align: right">300000.00 €</td></tr>
+<tr><td style="text-align: left"></td><td style="text-align: left"></td><td style="text-align: right"><strong>TOTAL</strong></td><td style="text-align: right">1044000.00 €</td></tr>
+</tbody></table>
+<ul>
+<li><strong>Opcion 2: Solución Lorawan</strong></li>
+</ul>
+<table><thead><tr><th style="text-align: left">Elemento</th><th style="text-align: left">Unidades</th><th style="text-align: right">Costo Unitario</th><th style="text-align: right">Subtotal</th></tr></thead><tbody>
+<tr><td style="text-align: left">Medidor de agua +<br>Adaptador Lorawan</td><td style="text-align: left">15k</td><td style="text-align: right">42.00 €</td><td style="text-align: right">630000.00 €</td></tr>
+<tr><td style="text-align: left">Concentrador LoraWan.<br>Marca Ursalink (Unds = 15k / 2000)</td><td style="text-align: left">8</td><td style="text-align: right">1100.00 €</td><td style="text-align: right">8800.00 €</td></tr>
+<tr><td style="text-align: left">Interconexión / Instalación /<br>Servidor Web</td><td style="text-align: left">15k</td><td style="text-align: right">30.00 €</td><td style="text-align: right">450000.00 €</td></tr>
+<tr><td style="text-align: left"></td><td style="text-align: left"></td><td style="text-align: right"><strong>TOTAL</strong></td><td style="text-align: right">1088800.00 €</td></tr>
+</tbody></table>
+<p>Si bien la solución LoRaWan requiere muchos menos concentradores, el costo de instalarlos en los postes, cablear las antenas y contratar el servidor web requerido por LoRaWan es mayor que el requerido para implementar la red M-bus. Adicionalmente, el concentrador M-bus me permite fragmentar y organizar mis mediciones, agrupándolas por edificaciones que se encuentren cercanas geográficamente.</p>
+<p>Dado el presupuesto estimado y la facilidad para agrupar las mediciones de los sensores, el desarrollo del proyecto se hará por medio de Meter Bus, es decir, la OPCIÓN 1.</p>
+<h2 id="5-almacenamiento-de-datos">5. Almacenamiento de Datos</h2>
+<p>Para describir la arquitectura de datos de la red que vamos a construir, es necesario tomar en cuenta los siguientes factores</p>
+<ul>
+<li>Hay varios distritos dentro de una ciudad. En cada distrito se encuentra N concentradores</li>
+<li>Cada concentrador puede agrupar hasta 20 medidores de agua</li>
+<li>Cada medidor de agua realiza al menos una lectura semanal y presenta la cantidad de agua que ha consumido desde la última vez que se realizó la medición.</li>
+</ul>
+<p>Por medio de queries se puede construir una tabla donde se almacenen las lecturas históricas de cada distrito y de cada cliente. Semanalmente, la tabla debería replicarse y guardarse para acceder a los históricos de cada cliente y también para calcular los agregados por distrito.</p>
+<p>Puesto que en este caso se va a estar trabajando con una simulación del sistema, se va a trabajar con la tabla de históricos o ‘logs’.</p>
+<table><thead><tr><th>log_id</th><th>log_date</th><th>slave_id</th><th>master_id</th><th>district_id</th><th>water_amount</th></tr></thead><tbody>
+<tr><td>1</td><td>2020-06-01 10:05:00</td><td>1</td><td>1</td><td>4</td><td>300</td></tr>
+<tr><td>2</td><td>2020-06-01 10:15:00</td><td>3</td><td>2</td><td>2</td><td>200</td></tr>
+<tr><td>3</td><td>2020-06-01 10:25:00</td><td>2</td><td>1</td><td>4</td><td>400</td></tr>
+</tbody></table>
+<p>El slave_id indica el medidor de cada cliente. El master_id es el identificador del concentrador y el district_id es el identificador de los barrios dentro de Triana. Por medio de relaciones se podrían extraer los nombres completos de cada uno de los elementos antes indicado</p>
+<h2 id="6-simulacion-de-la-propuesta">6. Simulación de la Propuesta</h2>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div>
+        <figure>
+          <img src="&#x2F;images&#x2F;05_06_esquema_red_ciudad.png" width="560" height="315" alt="Figura 6. Distribucion de los medidores y concentradores en el distrito"/>
+          <figcaption style="text-align: center; font-style: italic; color: grey;">Figura 6. Distribucion de los medidores y concentradores en el distrito</figcaption>
+        </figure>
+      </div>
+</div>
+<p>Para simular el funcionamiento del sistema se decidió utilizar la distribución que se muestra en la Figura 6. La generación de datos dentro del sistema se hará por medio de <a href="https://www.toptal.com/nodejs/programacion-visual-con-node-red-conectando-el-internet-de-las-cosas-con-facilidad">Node-RED</a>. El flow construido se muestra a continuación y está disponible en el <a href="https://github.com/jlrcolmenares/Water-Metering-System">siguiente repositorio</a>.</p>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div>
+        <figure>
+          <img src="&#x2F;images&#x2F;05_07_node_red_schema.png" width="560" height="315" alt="Figura 7. Flow de Node Red para la generación de datos"/>
+          <figcaption style="text-align: center; font-style: italic; color: grey;">Figura 7. Flow de Node Red para la generación de datos</figcaption>
+        </figure>
+      </div>
+</div>
+<p>Entonces, sabiendo la distribución de los medidores y cómo se generarán los datos, la tabla de logs quedará de la siguiente manera:</p>
+<table><thead><tr><th>log_id</th><th>log_date</th><th>slave_name</th><th>master_name</th><th>district_name</th><th>water_amount</th></tr></thead><tbody>
+<tr><td>1</td><td>2020-06-01 10:05:00</td><td>slave1</td><td>master1</td><td>distric1</td><td>300</td></tr>
+<tr><td>2</td><td>2020-06-01 10:15:00</td><td>slave3</td><td>master2</td><td>distric2</td><td>200</td></tr>
+<tr><td>3</td><td>2020-06-01 10:25:00</td><td>slave2</td><td>master1</td><td>distric1</td><td>400</td></tr>
+<tr><td>4</td><td>2020-06-01 10:35:00</td><td>slave1</td><td>master1</td><td>distric1</td><td>230</td></tr>
+<tr><td>5</td><td>2020-06-01 10:45:00</td><td>slave3</td><td>master2</td><td>distric2</td><td>110</td></tr>
+</tbody></table>
+<p>Con las condiciones antes mencionadas se estableció en entorno de simulación, el cual puede verse mucho mejor en el vídeo que presento al principio de este articulo.</p>
+<h2 id="7-conclusiones">7. Conclusiones</h2>
+<p>Desarrollar este proyecto fue una tarea muy interesante que permite tener una idea de todas las posibilidades que nos brinda una herramienta como Grafana. Sin embargo, quedan algunas cosas pendientes o posibles mejoras</p>
+<ol>
+<li>
+<p>Almacenamiento (PostgreSQL)</p>
+<ol>
+<li>Trabajar con entidades separadas en vez de escribir en una nica tabla.</li>
+<li>Escribir directamente en la tablas de cada una de las entidades</li>
+<li>Crear el querie que me produzcan la tabla logs.</li>
+</ol>
+</li>
+<li>
+<p>Generación de Datos (Node-RED)</p>
+<ol>
+<li>Simplificar la forma en que se escriben los datos en la bases de datos.</li>
+<li>Utilizar nodos JOIN para unir las lecturas generadas por cada uno de los medidores y escribir en la base de datos una nica vez</li>
+<li>Generación de datos más realistas. Que sigan un patrón o una función.</li>
+</ol>
+</li>
+<li>
+<p>Visualización (Grafana)</p>
+<ol>
+<li>Generar alarmas dentro de Grafana, para que aparezcan en el tablero</li>
+<li>Descargar los datos de un usuario por medio de grafana.</li>
+<li>Utilizar fuentes de datos adicionales</li>
+</ol>
+</li>
+</ol>
+<p>Espero que este archivo haya sido de su interés y quedo atento a sus comentarios. Saludos</p>
+
+	</div>
+	<hr class="post-end">
+	<footer class="post-info">
+    
+	  <p>
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+		
+		
+		<span class="tag"><a href="https://jlrcolmenares.github.io/tags/software/">software</a></span>
+		
+		<span class="tag"><a href="https://jlrcolmenares.github.io/tags/data/">data</a></span>
+		
+		<span class="tag"><a href="https://jlrcolmenares.github.io/tags/monitoring/">monitoring</a></span>
+		
+		<span class="tag"><a href="https://jlrcolmenares.github.io/tags/smart-cities/">smart_cities</a></span>
+		
+		
+    </p>
+    
+    <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>2343 Words</p>
+    
+    <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>2020-06-22</p>
+    
+	</footer>
+  </article>
+    
+  
+  <div class="post-nav thin">
+	
+	
+  </div>
+
+  
+</main>
+
+	  </div>
+	  
+	  
+
+
+
+<footer id="site-footer" class="section-inner thin animated fadeIn faster">
+  <p>&copy; 2024 <a href="https:&#x2F;&#x2F;jlrcolmenares.github.io&#x2F;">JLR</a></p>
+  <p>Made with <a href="https://www.getzola.org" target="_blank" rel="noopener">Zola</a>
+	
+	&#183; <a href="https://jlrcolmenares.github.io/rss.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a>
+	
+  </p>
+</footer>
+
+
+
+
+	</div>
+	
+	<script src="https://jlrcolmenares.github.io/js/main.js"></script>
+
+	<!-- Math rendering -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, { delimiters: [ {left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}, {left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false}]});"></script>
+
+    
+		<link href="https://unpkg.com/highlightjs-badge/highlightjs/styles/railscasts.css" rel="stylesheet">
+		<!-- https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.1/build/styles/  for min version -->
+		<script src="https://unpkg.com/highlightjs-badge/highlightjs/highlight.pack.js"></script>
+		<script src="https://unpkg.com/highlightjs-badge/highlightjs-badge.min.js"></script>
+		<script>
+			var pres = document.querySelectorAll("pre>code");
+			for (var i = 0; i < pres.length; i++) {
+				hljs.highlightBlock(pres[i]);
+			}
+		</script>
+		
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+			<script>
+				var options = {
+					copyIconClass: "gg-clipboard",
+					checkIconClass: "gg-check"
+				};
+				window.highlightJsBadge(options);
+			</script>
+		
+
+	
+
+	
+	<script src="https://jlrcolmenares.github.io/js/main.js"></script>
+
+    
+    
+
+	
+    <!-- Global Site Tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4XXXXXXX-X"></script>
+    <script>
+     window.dataLayer = window.dataLayer || [];
+     function gtag(){dataLayer.push(arguments);}
+     gtag('js', new Date());
+     gtag('config', 'UA-4XXXXXXX-X');
+    </script>
+    
+  </body>
+</html>

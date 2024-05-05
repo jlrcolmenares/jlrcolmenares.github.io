@@ -1,0 +1,753 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>José Luis Colmenares</title>
+      <link>https://jlrcolmenares.github.io/</link>
+      <description>@jlrcolmenares blog</description>
+      <generator>Zola</generator>
+      <language>es</language>
+      <atom:link href="https://jlrcolmenares.github.io/rss.xml" rel="self" type="application/rss+xml"/>
+      <lastBuildDate>Mon, 11 Mar 2024 00:00:00 +0000</lastBuildDate>
+      <item>
+          <title>The Data Engineer&#x27;s Guide to Apache Airflow</title>
+          <pubDate>Mon, 11 Mar 2024 00:00:00 +0000</pubDate>
+          <author>Unknown</author>
+          <link>https://jlrcolmenares.github.io/posts/09-apache-airflow-guide/</link>
+          <guid>https://jlrcolmenares.github.io/posts/09-apache-airflow-guide/</guid>
+          <description xml:base="https://jlrcolmenares.github.io/posts/09-apache-airflow-guide/">&lt;div style=&quot;background-color: lightblue; padding: 2px; border-radius: 5px; display: flex; align-items: center;&quot;&gt;  
+  &lt;div style=&quot;flex: 0 0 24px; margin-right: 10px;&quot;&gt;
+    &lt;img src=&quot;&#x2F;icons&#x2F;info-icon.png&quot; alt=&quot;Info&quot; style=&quot;width: 100%; height: auto;&quot;&gt;
+  &lt;&#x2F;div&gt;
+  &lt;div style=&quot;flex: 1;&quot;&gt;
+    &lt;p&gt;
+      This article was originally published in Medium.
+    &lt;&#x2F;p&gt;
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Apache Airflow &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;clarityai-engineering&#x2F;the-data-engineers-guide-to-apache-airflow-a1bc876024ca&quot;&gt;is a very popular platform to schedule data pipelines&lt;&#x2F;a&gt;. But what value are getting as Data Engineer when we choose to use this tools? In this article we&#x27;re going to learn about this.&lt;&#x2F;p&gt;
+&lt;p&gt;When people talk about data specialists, I often find that there are a lot of doubts about the different profiles that that exists in the sector. For the sake of brevity I like to refer to this meme:&lt;&#x2F;p&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;09_01_meme_data_eng.webp&quot; width=&quot;560&quot; height=&quot;315&quot; alt=&quot;&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Why our poor Data Engineer (from now on, DE) is so stressed? Many factors could be affecting him. Data is often chaotic, dirty, unorganized, ingestions change very easily and extractions could broke by many causes. Data pipelines are vulnerable by default.&lt;&#x2F;p&gt;
+&lt;p&gt;And what is worse that your pipeline fails? That no one knows it fail! So you business processes and decisions are taken with outdated or wrong data.&lt;&#x2F;p&gt;
+&lt;p&gt;Here is when it comes the need for a platform that allows us to achieve at least two things:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Schedule our data pipelines.&lt;&#x2F;li&gt;
+&lt;li&gt;Inform us when they fail.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;This could be achieve by many ways, but Apache Airflow is in integrated tool that was build specifically for solve these and other problems inside a DE team.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;apache-airflow&quot;&gt;&lt;a href=&quot;https:&#x2F;&#x2F;airflow.apache.org&#x2F;&quot;&gt;Apache Airflow&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Apache Airflow is an open-source platform widely used in the data engineering field to schedule batch workflows. It was developed in 2015 by engineers from Airbnb, and later the Apache Foundation took over its development.&lt;&#x2F;p&gt;
+&lt;p&gt;This platform enables DE teams to create, schedule, and monitor batch data pipelines through the definition of DAGs (&lt;a href=&quot;https:&#x2F;&#x2F;airflow.apache.org&#x2F;docs&#x2F;apache-airflow&#x2F;stable&#x2F;core-concepts&#x2F;dags.html&quot;&gt;Directed Acyclic Graphs&lt;&#x2F;a&gt;) using Python.&lt;&#x2F;p&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;09_02_airflow_example.webp&quot; width=&quot;650&quot; height=&quot;315&quot; alt=&quot;Example of a DAG&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Example of a DAG&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;A DAG represents the collection of tasks that need to be run to process a raw batch of data. These tasks are organised in a way that the DAG reflects their relationships and dependencies. Each square in the image at the top represents a “task,” and each task could be a function or a set of functions in an ETL process.&lt;&#x2F;p&gt;
+&lt;p&gt;Data engineering (DE) teams find value in using Airflow in different ways, some of which are:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Scheduling workflows: Airflow ensures that data processes run reliably when the conditions are met, usually by the usage of &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Cron#CRON_expression&quot;&gt;CRON expressions&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;Monitoring and alerting: Airflow can track the progress of workflows in real-time and send alerts if any issues arise.&lt;&#x2F;li&gt;
+&lt;li&gt;Promoting reusability and modularity: by allowing repetitive process to exist in the same environment, so they could be reused in many DAGs.&lt;&#x2F;li&gt;
+&lt;li&gt;Allowing scalability: Tasks that allow the processing of large data volumes can be organised in a way that scales to accommodate increasing data loads over time.&lt;&#x2F;li&gt;
+&lt;li&gt;Controlling dependencies: Airflow ensures that tasks are executed in the correct order based on their dependencies. This helps prevent data inconsistencies and ensures that downstream tasks only run when their prerequisites have been met.&lt;&#x2F;li&gt;
+&lt;li&gt;Facilitating visualization: Airflow provides a user-friendly interface for monitoring workflows, making it easier for DE to understand the structure and dependencies of their pipelines.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;For example, at &lt;a href=&quot;https:&#x2F;&#x2F;clarity.ai&#x2F;&quot;&gt;ClarityAI&lt;&#x2F;a&gt;, our DE team uses DAGs for many tasks, some of which include:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Ingesting data into our S3 buckets.&lt;&#x2F;li&gt;
+&lt;li&gt;Moving data from S3 buckets to our data warehouse.&lt;&#x2F;li&gt;
+&lt;li&gt;Joining data from different sources to create new datasets.&lt;&#x2F;li&gt;
+&lt;li&gt;Modifying raw data to comply with our internal schemas.&lt;&#x2F;li&gt;
+&lt;li&gt;Updating databases from different environments.&lt;&#x2F;li&gt;
+&lt;li&gt;Running validations over the data.&lt;&#x2F;li&gt;
+&lt;li&gt;Making data available to our final clients in the SaaS platform.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Airflow is like a Swiss Army Knife, assisting us in many processes, and it can surely benefit you too once you start exploring its features. Since my intention is to demonstrate how to use this platform, I’d like to introduce you to a repository where you can test some of Airflow’s capabilities&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;airflow-dummy-repository&quot;&gt;Airflow Dummy Repository&lt;&#x2F;h2&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;09_03_airflow_dashboards.webp&quot; width=&quot;650&quot; height=&quot;315&quot; alt=&quot;Airflow User Interface&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Airflow User Interface&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;In the second half of this post I like to present a situation where Airflow adds a lot of value to the daily process of a DE, while review some theoretical concepts of the platform&lt;&#x2F;p&gt;
+&lt;p&gt;Please, download this &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;jlrcolmenares&#x2F;airflow_director&quot;&gt;repository&lt;&#x2F;a&gt;. Is going to be the boiler plate to run your first Airflow instance in local.&lt;&#x2F;p&gt;
+&lt;p&gt;You&#x27;re going to be running &lt;a href=&quot;https:&#x2F;&#x2F;airflow.apache.org&#x2F;docs&#x2F;apache-airflow&#x2F;stable&#x2F;howto&#x2F;docker-compose&#x2F;index.html&quot;&gt;Airflow in Docker&lt;&#x2F;a&gt;. The only pre-requisite that is needed in to have Docker compose installed.&lt;&#x2F;p&gt;
+&lt;p&gt;Clone the repo (or download it as a zip file) and run the following command &lt;code&gt;docker-compose airflow-init&lt;&#x2F;code&gt; to start the local database and &lt;code&gt;docker-compose up&lt;&#x2F;code&gt; to run the webserver.&lt;&#x2F;p&gt;
+&lt;p&gt;In &lt;code&gt;localhost:8080&lt;&#x2F;code&gt; you should see a login window. The default user&#x2F;password for airflow in: &lt;code&gt;airflow&#x2F;airflow&lt;&#x2F;code&gt;. Login and then you&#x27;re going see a set of dags.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;airflow-architecture&quot;&gt;Airflow Architecture&lt;&#x2F;h2&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;09_04_scheduler.webp&quot; width=&quot;650&quot; height=&quot;315&quot; alt=&quot;Airflow Basic Architecture&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Airflow Basic Architecture&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;The image above show the basic &lt;a href=&quot;https:&#x2F;&#x2F;airflow.apache.org&#x2F;docs&#x2F;apache-airflow&#x2F;2.0.1&#x2F;concepts.html&quot;&gt;Airflow Architecture&lt;&#x2F;a&gt;, this a good starting point to understand what you&#x27;re seeing in your device after you Airflow session was started.&lt;&#x2F;p&gt;
+&lt;p&gt;First, I want you to focus in the DE. In the infographic you could see that the DE interacts with Airflow through 3 different block&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;DAGs:&lt;&#x2F;strong&gt; containing Python code that represents a data pipeline.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;User interface:&lt;&#x2F;strong&gt; That depends on the Webserver and if the UX that allow to monitor and manually trigger the DAGs.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Airflow.cfg:&lt;&#x2F;strong&gt; A file that contains the configuration of the environment. The official documentation is here &lt;a href=&quot;https:&#x2F;&#x2F;airflow.apache.org&#x2F;docs&#x2F;apache-airflow&#x2F;stable&#x2F;configurations-ref.html&quot;&gt;airflow.cfg file&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;Since this tutorial works with a simplified environment, the airflow.cfg is &amp;quot;embedded&amp;quot; in the docker-compose file. In the &amp;quot;x-airflow-common&amp;quot; section are defined a series of environment variables that is going to be used across all the services brought up by the docker file.&lt;&#x2F;p&gt;
+&lt;pre&gt;&lt;code&gt;x-airflow-common:
+  &amp;amp;airflow-common
+  build: .
+  environment:
+    &amp;amp;airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2:&amp;#x2F;&amp;#x2F;airflow:airflow@postgres&amp;#x2F;airflow
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql:&amp;#x2F;&amp;#x2F;airflow:airflow@postgres&amp;#x2F;airflow
+    AIRFLOW__CELERY__BROKER_URL: redis:&amp;#x2F;&amp;#x2F;:@redis:6379&amp;#x2F;0
+    AIRFLOW__CORE__FERNET_KEY: &amp;#x27;&amp;#x27;
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: &amp;#x27;true&amp;#x27;
+    AIRFLOW__CORE__LOAD_EXAMPLES: &amp;#x27;false&amp;#x27;
+    AIRFLOW__API__ACCESS_CONTROL_ALLOW_HEADERS: &amp;#x27;true&amp;#x27;
+    AIRFLOW__API__AUTH_BACKENDS: &amp;#x27;airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session&amp;#x27;
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;We&#x27;re not going to check this configuration in this article, but leave a comment at the end if you want to know more.&lt;&#x2F;p&gt;
+&lt;p&gt;After these environment variables, you could find the definition of the different server needed to airflow to exist. Let&#x27;s comment them.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Metadata DB:&lt;&#x2F;strong&gt; Is an Postgres SQL database that store metadata about the all the DAGs being run, users and much more information.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Web Server:&lt;&#x2F;strong&gt; Is running a Flask web application under the hood, which communicates with the Airflow Metadata DB to retrieve and display information. It’s launched separately from the Airflow scheduler and worker(s) but is an integral part of the Airflow ecosystem,&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Scheduler:&lt;&#x2F;strong&gt; Is the brain behind Airflow, it monitor all tasks and DAGs and triggers task once this dependencies are complete. It is designed to run as a persistent service and it is also configured by airflow.cfg.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Executor:&lt;&#x2F;strong&gt; Are mechanism by which task instances get run. Airflow support many executor, in productive environment we mostly use KubernetExecutor but &lt;a href=&quot;https:&#x2F;&#x2F;airflow.apache.org&#x2F;docs&#x2F;apache-airflow&#x2F;2.0.1&#x2F;executor&#x2F;index.html&quot;&gt;there are many more&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Worker:&lt;&#x2F;strong&gt; Are separated instances which job into run specific task inside a Airflow.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Good, keep this in mind. Because now we&#x27;re going to see how everything work inside with a DAG.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;putting-theory-into-work-your-first-dag&quot;&gt;Putting theory into work. Your first DAG&lt;&#x2F;h2&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;09_05_example_dag.webp&quot; width=&quot;650&quot; height=&quot;315&quot; alt=&quot;A very simple DAG&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;A very simple DAG&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;In this section we&#x27;re going to be commenting the code of a DAG and see what is happening every time we trigger it.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;from datetime import datetime
+from airflow import DAG
+from airflow.operators.dummy import DummyOperator
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import BranchPythonOperator, PythonOperator
+from airflow.utils.trigger_rule import TriggerRule
+from airflow.models import TaskInstance
+import random
+
+def branch_decision(**context):
+    &amp;quot;&amp;quot;&amp;quot;Randomly choose between success (True) and failure (False).&amp;quot;&amp;quot;&amp;quot;
+    return &amp;#x27;success_task&amp;#x27; if random.choice([True, False]) else &amp;#x27;failure_task&amp;#x27;
+
+def notify_outcome(ti: TaskInstance, **context):
+    &amp;quot;&amp;quot;&amp;quot;Log the notification message using the default logger.&amp;quot;&amp;quot;&amp;quot;
+    outcome = ti.xcom_pull(task_ids=&amp;#x27;branch_decision&amp;#x27;)
+    if outcome == &amp;#x27;success_task&amp;#x27;:
+        notification_message = &amp;#x27;Success: The operation was successful.&amp;#x27;
+    else:
+        notification_message = &amp;#x27;Failure: The operation failed.&amp;#x27;
+    ti.log.info(notification_message)
+    return notification_message
+
+# PART 1. Definition of the DAG
+with DAG(
+    dag_id=&amp;#x27;example_data_analysis_dag&amp;#x27;,
+    start_date=datetime(2024,3,5),
+    default_args={
+        &amp;#x27;owner&amp;#x27;: &amp;#x27;airflow&amp;#x27;,
+    },
+    description=&amp;#x27;A DAG for data analysis with dynamic notification based on outcome&amp;#x27;,
+    schedule_interval=&amp;quot;@daily&amp;quot;,
+    catchup=False,
+    tags=[&amp;#x27;data-analysis&amp;#x27;],
+) as dag:
+
+    # PART 2. Definition of the tasks
+    start = DummyOperator(task_id=&amp;#x27;start&amp;#x27;)
+
+    data_analysis = BranchPythonOperator(
+        task_id=&amp;#x27;branch_decision&amp;#x27;,
+        python_callable=branch_decision,
+    )
+
+    success_task = BashOperator(
+        task_id=&amp;#x27;success_task&amp;#x27;,
+        bash_command=&amp;#x27;echo &amp;quot;Operation succeeded.&amp;quot;&amp;#x27;,
+    )
+
+    failure_task = BashOperator(
+        task_id=&amp;#x27;failure_task&amp;#x27;,
+        bash_command=&amp;#x27;echo &amp;quot;Operation failed.&amp;quot; &amp;amp;&amp;amp; exit 1&amp;#x27;,
+    )
+
+    notification_task = PythonOperator(
+        task_id=&amp;#x27;notification_task&amp;#x27;,
+        python_callable=notify_outcome,
+        trigger_rule=TriggerRule.DUMMY
+    )
+
+    # PART 3. Definition of the Workflow
+    start &amp;gt;&amp;gt; data_analysis &amp;gt;&amp;gt; [success_task, failure_task]
+    [success_task, failure_task] &amp;gt;&amp;gt; notification_task
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;part-1-definition-of-the-dag&quot;&gt;PART 1. Definition of the DAG&lt;&#x2F;h3&gt;
+&lt;p&gt;The first part we&#x27;re going to focus is &lt;a href=&quot;https:&#x2F;&#x2F;airflow.apache.org&#x2F;docs&#x2F;apache-airflow&#x2F;stable&#x2F;core-concepts&#x2F;dags.html&quot;&gt;the definition of the DAG&lt;&#x2F;a&gt;. It start with the DAG object. Any DAG should have at least 3 elements: an unique identifier (dag_id), an schedule and an start_date.&lt;&#x2F;p&gt;
+&lt;p&gt;The &#x27;schedule&#x27; argument is &lt;a href=&quot;https:&#x2F;&#x2F;airflow.apache.org&#x2F;docs&#x2F;apache-airflow&#x2F;1.10.1&#x2F;scheduler.html&quot;&gt;where we define expression&lt;&#x2F;a&gt; to indicate when the DAG is triggered. DAGs are triggered each time that the schedule conditions are met and Airflow create an unique &#x27;dag_runid&#x27; to associate and store event that occurred in an execution.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;part-2-definition-of-the-tasks&quot;&gt;PART 2. Definition of the tasks&lt;&#x2F;h3&gt;
+&lt;p&gt;To define elements of a task Airflow have defined &lt;a href=&quot;https:&#x2F;&#x2F;airflow.apache.org&#x2F;docs&#x2F;apache-airflow&#x2F;stable&#x2F;howto&#x2F;operator&#x2F;index.html&quot;&gt;a series of Operators&lt;&#x2F;a&gt;: elements that could be used to call functions. Some of the most common ones are the Python, Bash and Kubernetes Operator.&lt;&#x2F;p&gt;
+&lt;p&gt;In this case, the &lt;code&gt;data_analysis&lt;&#x2F;code&gt; object is a PythonOperator that calls the &lt;code&gt;branch_decision&lt;&#x2F;code&gt; function.&lt;&#x2F;p&gt;
+&lt;p&gt;Task can talk between thenselves thank to &lt;a href=&quot;https:&#x2F;&#x2F;airflow.apache.org&#x2F;docs&#x2F;apache-airflow&#x2F;stable&#x2F;core-concepts&#x2F;xcoms.html&quot;&gt;cross-communication (XComs)&lt;&#x2F;a&gt;. In this DAG, the &#x27;notify_outcome function&#x27; capture the return value of the branc_decision task. This value is automatically stored in XCom under the task’s ID and used to send different notification messages.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;part-3-workflow-definition&quot;&gt;PART 3. Workflow Definition&lt;&#x2F;h3&gt;
+&lt;p&gt;To defines the dependencies between tasks, Airflow uses what is called &lt;a href=&quot;https:&#x2F;&#x2F;airflow.apache.org&#x2F;docs&#x2F;apache-airflow&#x2F;stable&#x2F;tutorial&#x2F;fundamentals.html#example-pipeline-definition&quot;&gt;Bitshift Composition&lt;&#x2F;a&gt;. This is the usage of &amp;gt;&amp;gt;to indicate how task should be triggered.&lt;&#x2F;p&gt;
+&lt;p&gt;But the relationship between task could also be much more alternative with &lt;a href=&quot;https:&#x2F;&#x2F;airflow.apache.org&#x2F;docs&#x2F;apache-airflow&#x2F;stable&#x2F;tutorial&#x2F;fundamentals.html#example-pipeline-definition&quot;&gt;the usage of TriggerRules&lt;&#x2F;a&gt;. The default rule is &#x27;all_success&#x27;, but in this case the DUMMY rule is setted, so notification_task is triggered whatever happens before.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;when-triggering-a-dag&quot;&gt;When triggering a DAG&lt;&#x2F;h2&gt;
+&lt;p&gt;When the DAG is triggered, the Airflow scheduler places it on the queue for execution, and then workers are assigned to execute each task within the DAG.&lt;&#x2F;p&gt;
+&lt;p&gt;The execution begins with the &lt;code&gt;start&lt;&#x2F;code&gt; task, a &lt;code&gt;DummyOperator&lt;&#x2F;code&gt; that essentially acts as a placeholder marking the beginning. Following this, the &lt;code&gt;branch_decision&lt;&#x2F;code&gt; task, a &lt;code&gt;BranchPythonOperator&lt;&#x2F;code&gt;, randomly selects between &lt;code&gt;success_task&lt;&#x2F;code&gt; and &lt;code&gt;failure_task&lt;&#x2F;code&gt; based on its internal logic, automatically pushing its decision to XCom.&lt;&#x2F;p&gt;
+&lt;p&gt;Based on this decision, the workflow continues to either of the aforementioned task. Both of these tasks are &lt;code&gt;BashOperators&lt;&#x2F;code&gt; executing simple echo commands, with &lt;code&gt;failure_task&lt;&#x2F;code&gt; designed to exit with a non-zero status to simulate a failure.&lt;&#x2F;p&gt;
+&lt;p&gt;After either of these tasks completes, the &lt;code&gt;notification_task&lt;&#x2F;code&gt; (a &lt;code&gt;PythonOperator&lt;&#x2F;code&gt;) is executed, which pulls the outcome of the &lt;code&gt;branch_decision&lt;&#x2F;code&gt; task from XCom and logs a corresponding success or failure message.&lt;&#x2F;p&gt;
+&lt;p&gt;Throughout this process, Airflow manages task dependencies, execution order, and the passing of contextual information (like XCom values) between tasks.&lt;&#x2F;p&gt;
+&lt;p&gt;All the information about this runs is stored in the Postgres DB and could be accessed querying directly or using a REST API that Airflow provides.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;wrapping-up&quot;&gt;Wrapping Up&lt;&#x2F;h2&gt;
+&lt;p&gt;Before we end, I wanted to share a bit about what we’ve covered. Originally, I had plans to dive into more ways we can use Apache Airflow, like triggering data pipelines with the output of other DAGs or dynamically creating tasks based on input arguments to a DAG. But for now, I thought it best to keep things straightforward.&lt;&#x2F;p&gt;
+&lt;p&gt;Airflow is one of the tools, but not the only tool, that we use on a day-to-day basis to solve problems in the data engineering office. At ClarityAI, we like to see ourselves as product engineers. Every day, we focus more on building software solutions to allow our internal clients to find value in the data that we manage and ingest.&lt;&#x2F;p&gt;
+&lt;p&gt;If you found this helpful, please give it a thumbs up and share it with others. Your feedback will help me decide if I should dive deeper into this topic in the future.&lt;&#x2F;p&gt;
+&lt;p&gt;Thanks for joining me on this journey. Until next time!&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Construyendo un Dashboard con Grafana</title>
+          <pubDate>Mon, 22 Jun 2020 00:00:00 +0000</pubDate>
+          <author>Unknown</author>
+          <link>https://jlrcolmenares.github.io/posts/05-contruyendo-dashboard-con-grafana/</link>
+          <guid>https://jlrcolmenares.github.io/posts/05-contruyendo-dashboard-con-grafana/</guid>
+          <description xml:base="https://jlrcolmenares.github.io/posts/05-contruyendo-dashboard-con-grafana/">&lt;div style=&quot;background-color: lightblue; padding: 2px; border-radius: 5px; display: flex; align-items: center;&quot;&gt;  
+  &lt;div style=&quot;flex: 0 0 24px; margin-right: 10px;&quot;&gt;
+    &lt;img src=&quot;&#x2F;icons&#x2F;info-icon.png&quot; alt=&quot;Info&quot; style=&quot;width: 100%; height: auto;&quot;&gt;
+  &lt;&#x2F;div&gt;
+  &lt;div style=&quot;flex: 1;&quot;&gt;
+    &lt;p&gt;
+      Artículo publicado originalmente en mi antiguo blog de WordPress.
+    &lt;&#x2F;p&gt;
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;En &lt;a href=&quot;https:&#x2F;&#x2F;joseluisramoncolmenares.wordpress.com&#x2F;2020&#x2F;06&#x2F;22&#x2F;dashboard-con-grafana-y-docker-parte-1&#x2F;&quot;&gt;este artículo&lt;&#x2F;a&gt; daré una explicación extensa de un proyecto que desarrollé para la &lt;em&gt;Infraestructura Avanzada de Redes de Sensores&lt;&#x2F;em&gt;, una de las materias del máster sobre Smart Cities que realicé en Sevilla en 2020. Aquí la versión en vídeo:&lt;&#x2F;p&gt;
+&lt;div  style=&quot;display: flex; justify-content: center;&quot;&gt;
+    &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;UO6tl2n1UvE?si=SI6lS7oNImGKEi60&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; referrerpolicy=&quot;strict-origin-when-cross-origin&quot; allowfullscreen&gt;&lt;&#x2F;iframe&gt;   
+&lt;&#x2F;div&gt;
+
+&lt;h2 id=&quot;0-planteamiento-del-problema&quot;&gt;0. Planteamiento del Problema&lt;&#x2F;h2&gt;
+&lt;p&gt;En el proyecto final para la materia se nos planteó el siguiente problema: &lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;Se requiere diseñar una red de contadores de agua. En este caso, la red es muy homogénea. Una vez definido un contador tienes definidos todos los nodos. Así que, en este caso, la problemática que tienes que trabajar es la cantidad de elementos. Cuando simules la red, debes resolver cómo lo vas a hacer el registro para una cantidad elevada de elementos (usando las formas normales explicadas en bases de datos) y cómo harás el mostrado de datos, que permita tener medidas específicas de un contador, así como datos acumulados para una barriada&#x2F;ciudad entera.&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;1-consideraciones-iniciales&quot;&gt;1. Consideraciones Iniciales&lt;&#x2F;h2&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;05_01_sistemas_inteligente_red.jpg&quot; width=&quot;560&quot; height=&quot;315&quot; alt=&quot;Figura 1. Topología de una Red Insteligente de Sensores&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Figura 1. Topología de una Red Insteligente de Sensores&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;En la Figura 1 se observa un ejemplos de cómo se implementa una red inteligente de agua. En dicho ejemplo, se observa que esta red le permite a la empresa de distribución de agua realizar la medición de los medidores de agua ubicados en esa ciudad. Para ello, se utilizan diversas redes de comunicación, como fibra óptica o GPRS.&lt;&#x2F;p&gt;
+&lt;p&gt;El objetivo es diseñar un sistema similar al presentado en la Figura 1. Profundizando en el tipo en los sensores, redes y protocolos. Generando a su vez una simulación que permita observar como se comportaría el sistema.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;1-1-instrumentos-de-medicion-de-agua&quot;&gt;1.1. Instrumentos de Medicion de Agua&lt;&#x2F;h3&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;05_02_contadores_emivasa.jpg&quot; width=&quot;380&quot; height=&quot;150&quot; alt=&quot;Figura 2. Cuadro de contadores en una residencia&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Figura 2. Cuadro de contadores en una residencia&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Por normal general, los contadores de agua deben estar ubicados a nivel de la calle, de forma que la empresa encargada de la medición del agua pueda tomar sus medidas sin necesidad de acceder a los pisos. En el caso de edificios residenciales, los contadores de agua usualmente están ubicados en un cuarto de servicios, distribuido por medio de baterías que permiten organizar y hacer accesibles todos los contadores de cada unidad residencial desde un mismo lugar, como se muestra en la Figura 2. En dicha Figura también se observa la forma tradicional en la que se realiza la medición: por medio de un operador contratado por la empresa, cuya función era ir mensualmente, residencia por residencia, tomando nota de la medida de cada uno de los contadores.&lt;&#x2F;p&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;05_03_contador_de_agua.jpg&quot; width=&quot;560&quot; height=&quot;315&quot; alt=&quot;Figura 3. Contador de agua para telemedición&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Figura 3. Contador de agua para telemedición&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Los contadores de agua residencial usualmente están hechos en bronce, internamente tiene un mecanismo que rota cuando el agua pasa a través de él. Suelen ser contadores volumétricos, es decir, que una vuelta del embolo interior representa un volumen de líquido específico. La rotación del émbolo activa a su vez un suiche reed, en donde cada pulso del suiche corresponde a una cantidad precisa de litros de agua.&lt;&#x2F;p&gt;
+&lt;p&gt;La pieza plástica que está adosada encima del contador en la Figura 3 tiene tantos los mecanismos para la lectura en sitio, es decir, los números rotativos, como el suiche reed con su mecanismo de transmisión. En la Figura también se observa un cable el cual llevaría la información del contador a un bus me medición, como los puede ser M-bus, Modbus, etc (Se hacen a medida).&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;1-2-antecendentes&quot;&gt;1.2. Antecendentes&lt;&#x2F;h3&gt;
+&lt;p&gt;Antes de empezar el desarrollo de este trabajo es importante repasar algunos proyectos sobre redes inteligentes de agua se ha realizado en la última década en España, por ejemplo:&lt;&#x2F;p&gt;
+&lt;p&gt;El grupo Agua de Valencia indica que desde 2012 tiene implementado un sistema de Telegestión de Agua. En un vídeo, indican que su topología es la siguiente:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;En el punto más exterior de su red tienen a los contadores inteligentes, los cuales se conectan entre sí por medio de un bus. Este bus lleva sus lecturas a un concentrador. Estas lecturas se envían semanalmente a centro de medición por medio de radio.&lt;&#x2F;li&gt;
+&lt;li&gt;La empresa Acciona, a la cual hice referencia anteriormente habla aquí acerca de su proyecto conjunto con Aguas de Burgos, cuay información extendida puede verse en la Figura 1. 
+Adicional a esto, el Estado Español aprobó una ley en la cual indica que todos los contadores de agua con más de 12 años de antigüedad tienen 5 años para renovarse. Esto indica que la pertinencia en el desarrollo de este proyecto es más que necesaria actualmente. Más información al respecto aquí.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;2-diseno-de-sistema&quot;&gt;2. Diseño de Sistema&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;2-1-instrumentacion&quot;&gt;2.1. Instrumentacion&lt;&#x2F;h3&gt;
+&lt;p&gt;En el mercado europeo existen múltiples fabricantes de contadores de agua, por lo que se disponen de muchas opciones con prestaciones similares. Para este proyecto se ha seleccionado un contador marca Abering, modelo WS de chorro múltiple, pre equipado para tele medición. En la Figura 3 se observa el contador seleccionado.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;2-2-comunicacion&quot;&gt;2.2. Comunicacion&lt;&#x2F;h3&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;05_04_mbus_simple_network.jpeg&quot; width=&quot;560&quot; height=&quot;315&quot; alt=&quot;Figura 4. Topología MBus&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Figura 4. Topología MBus&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;En la Figura 4 se observa la topología que usualmente se utiliza para realizar la tele-medición de los contadores de una residencia de varios pisos. Puede observarse como los medidores se conectan entre si por medio de un bus (en ese caso M-bus). Luego, esa señal llega a un maestro que se encarga de concentrar las mediciones de todos los sensores. Este módulo maestro puede tener capacidad GSM, y enviar a la empresa de gestión de agua toda la información de los contadores conectados al bus por medio de GPRS o RS232, como se muestra en la Figura.&lt;&#x2F;p&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;05_05_lorawan_network.png&quot; width=&quot;560&quot; height=&quot;315&quot; alt=&quot;Figura 5. Topología LoRaWan&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Figura 5. Topología LoRaWan&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Una alternativa para el sistema alámbrico de medición es hacerlo por medio de una red inalámbrica, por ejemplo, LoRaWan. En la Figura 5, se observa como la topología que sigue la red es equivalente a la que se tenía en la Figura 4, ya que las mediciones de varios sensores se unen en un concentrador. Luego de que son agrupadas, se transmiten a un centro de datos para su análisis.&lt;&#x2F;p&gt;
+&lt;p&gt;Sabiendo entonces que se tienen soluciones equivalentes para el mismo problema, se realizó un análisis para determinar cuál de los dos protocolos se utilizaría para construir la red de tele medición.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;3-seleccion-de-red-de-comunicaciones&quot;&gt;3. Selección de Red de Comunicaciones&lt;&#x2F;h3&gt;
+&lt;p&gt;En la sección anterior se indicó que el costo de los contadores era un costo fijo, ya que casi todos los contadores residenciales disponibles en España tienen un costo aproximado de 35 euros. Los costos variables dentro del proyecto serán aquellos relacionados con los elementos que se necesitan para implementar la red de comunicación&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Opcion 1: Solución M-Bus&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Para la solución basada en M-bus se consideró utilizar &lt;a href=&quot;https:&#x2F;&#x2F;www.novaut.com&#x2F;es&#x2F;decode&#x2F;367349-mm20-24-decode.html&quot;&gt;el concentrador M-Bus Marca Decode, Modelo MM20-GSM&lt;&#x2F;a&gt;.  El cual realiza lecturas de hasta 20 esclavos M-bus. En Sevilla la mayoría de las residencias tiene menos de 20 pisos, por lo tanto, este concentrador permitiría agrupar los medidores de agua de un edificio. Lo cual es muy bueno al momento de sectorizar las mediciones.&lt;&#x2F;p&gt;
+&lt;p&gt;Dentro de sus prestaciones más interesantes está la posibilidad de realizar la configuración de los mensajes que se enviarán vía GSM por medio de una interfaz de usuario. Esto permite configurar el mensaje SMS únicamente con la información de mayor utilidad para la empresa de distribución.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Opcion 2: Solución LoRaWan&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Para la solución basada en LoRaWan tiene que adosar un módulo de transmisión LoRa al medidor de agua. Esto hace que su precio sea ligeramente superior al medidor que tiene un módulo M-bus. Se profundizará en esto al final de esta sección.&lt;&#x2F;p&gt;
+&lt;p&gt;Los concentradores LoRaWan permiten trabajar con muchos más dispositivos que los que los M-bus. Por ejemplo, &lt;a href=&quot;https:&#x2F;&#x2F;ursalink.eu&#x2F;wp-content&#x2F;uploads&#x2F;2019&#x2F;04&#x2F;FC_UG87-Gateway-2019.pdf&quot;&gt;el concentrador Marca Ursalink, Modelo UG87&lt;&#x2F;a&gt;, puede trabajar hasta con 2000 dispositivos LoRaWan. Esto reduce en gran medida la cantidad de concentradores necesarios para implementar la red. Sin embargo, requiere de una instalación más complicada, ya que los lectores LoRaWan debería tener línea directa con el concentrador.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;4-estimacion-de-costos&quot;&gt;4. Estimación de Costos&lt;&#x2F;h2&gt;
+&lt;p&gt;Para poder estimar el costo de la red se decidió limitar geográficamente el área que se quería atender en esta primera etapa. Para ello fue planteada la siguiente pregunta&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;¿Cuánto me costaría implementar un sistema de tele medición de agua en el Barrio de Triana en Sevilla?&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;En primer lugar, se quería confirmar si el alcance de los concentradores LoRaWan podría cubrir la zona de Triana. Las especificaciones del concentrador considerado dicen que tiene un alcance de hasta 11km, considerando que los edificios del barrio están contenidos en un área menor a 1.87km² se puede calcular que 1 concentrador es más que suficiente.&lt;&#x2F;p&gt;
+&lt;p&gt;Sin embargo, la cantidad de habitantes en Triana es de aproximadamente 49mil personas. Hacer el cálculo de como dividir esas personas en unidades habitacionales, tiendas y bares y demás establecimientos que consumen agua escapa al alcance de este proyecto. Para simplificar decidimos estimar la cantidad de medidores en el área dada a unos 15mil.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Opcion 1: Solución M-Bus + GSM&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th style=&quot;text-align: left&quot;&gt;Elemento&lt;&#x2F;th&gt;&lt;th style=&quot;text-align: left&quot;&gt;Unidades&lt;&#x2F;th&gt;&lt;th style=&quot;text-align: right&quot;&gt;Costo Unitario&lt;&#x2F;th&gt;&lt;th style=&quot;text-align: right&quot;&gt;Subtotal&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;Medidor de agua +&lt;br&gt;Adaptador MeterBus cableado&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: left&quot;&gt;15k&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;38.00 €&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;570000.00 €&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;Concentrador M-bus.&lt;br&gt;Marca Decode (Unds = 15k &#x2F; 20)&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: left&quot;&gt;750&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;232.00 €&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;174000.00 €&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;Interconexión &#x2F; Instalación &#x2F;&lt;br&gt;Contrato GSM&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: left&quot;&gt;15k&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;20.00 €&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;300000.00 €&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: left&quot;&gt;&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;&lt;strong&gt;TOTAL&lt;&#x2F;strong&gt;&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;1044000.00 €&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Opcion 2: Solución Lorawan&lt;&#x2F;strong&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th style=&quot;text-align: left&quot;&gt;Elemento&lt;&#x2F;th&gt;&lt;th style=&quot;text-align: left&quot;&gt;Unidades&lt;&#x2F;th&gt;&lt;th style=&quot;text-align: right&quot;&gt;Costo Unitario&lt;&#x2F;th&gt;&lt;th style=&quot;text-align: right&quot;&gt;Subtotal&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;Medidor de agua +&lt;br&gt;Adaptador Lorawan&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: left&quot;&gt;15k&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;42.00 €&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;630000.00 €&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;Concentrador LoraWan.&lt;br&gt;Marca Ursalink (Unds = 15k &#x2F; 2000)&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: left&quot;&gt;8&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;1100.00 €&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;8800.00 €&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;Interconexión &#x2F; Instalación &#x2F;&lt;br&gt;Servidor Web&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: left&quot;&gt;15k&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;30.00 €&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;450000.00 €&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td style=&quot;text-align: left&quot;&gt;&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: left&quot;&gt;&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;&lt;strong&gt;TOTAL&lt;&#x2F;strong&gt;&lt;&#x2F;td&gt;&lt;td style=&quot;text-align: right&quot;&gt;1088800.00 €&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;p&gt;Si bien la solución LoRaWan requiere muchos menos concentradores, el costo de instalarlos en los postes, cablear las antenas y contratar el servidor web requerido por LoRaWan es mayor que el requerido para implementar la red M-bus. Adicionalmente, el concentrador M-bus me permite fragmentar y organizar mis mediciones, agrupándolas por edificaciones que se encuentren cercanas geográficamente.&lt;&#x2F;p&gt;
+&lt;p&gt;Dado el presupuesto estimado y la facilidad para agrupar las mediciones de los sensores, el desarrollo del proyecto se hará por medio de Meter Bus, es decir, la OPCIÓN 1.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;5-almacenamiento-de-datos&quot;&gt;5. Almacenamiento de Datos&lt;&#x2F;h2&gt;
+&lt;p&gt;Para describir la arquitectura de datos de la red que vamos a construir, es necesario tomar en cuenta los siguientes factores&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Hay varios distritos dentro de una ciudad. En cada distrito se encuentra N concentradores&lt;&#x2F;li&gt;
+&lt;li&gt;Cada concentrador puede agrupar hasta 20 medidores de agua&lt;&#x2F;li&gt;
+&lt;li&gt;Cada medidor de agua realiza al menos una lectura semanal y presenta la cantidad de agua que ha consumido desde la última vez que se realizó la medición.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Por medio de queries se puede construir una tabla donde se almacenen las lecturas históricas de cada distrito y de cada cliente. Semanalmente, la tabla debería replicarse y guardarse para acceder a los históricos de cada cliente y también para calcular los agregados por distrito.&lt;&#x2F;p&gt;
+&lt;p&gt;Puesto que en este caso se va a estar trabajando con una simulación del sistema, se va a trabajar con la tabla de históricos o ‘logs’.&lt;&#x2F;p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;log_id&lt;&#x2F;th&gt;&lt;th&gt;log_date&lt;&#x2F;th&gt;&lt;th&gt;slave_id&lt;&#x2F;th&gt;&lt;th&gt;master_id&lt;&#x2F;th&gt;&lt;th&gt;district_id&lt;&#x2F;th&gt;&lt;th&gt;water_amount&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;1&lt;&#x2F;td&gt;&lt;td&gt;2020-06-01 10:05:00&lt;&#x2F;td&gt;&lt;td&gt;1&lt;&#x2F;td&gt;&lt;td&gt;1&lt;&#x2F;td&gt;&lt;td&gt;4&lt;&#x2F;td&gt;&lt;td&gt;300&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;2&lt;&#x2F;td&gt;&lt;td&gt;2020-06-01 10:15:00&lt;&#x2F;td&gt;&lt;td&gt;3&lt;&#x2F;td&gt;&lt;td&gt;2&lt;&#x2F;td&gt;&lt;td&gt;2&lt;&#x2F;td&gt;&lt;td&gt;200&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;3&lt;&#x2F;td&gt;&lt;td&gt;2020-06-01 10:25:00&lt;&#x2F;td&gt;&lt;td&gt;2&lt;&#x2F;td&gt;&lt;td&gt;1&lt;&#x2F;td&gt;&lt;td&gt;4&lt;&#x2F;td&gt;&lt;td&gt;400&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;p&gt;El slave_id indica el medidor de cada cliente. El master_id es el identificador del concentrador y el district_id es el identificador de los barrios dentro de Triana. Por medio de relaciones se podrían extraer los nombres completos de cada uno de los elementos antes indicado&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;6-simulacion-de-la-propuesta&quot;&gt;6. Simulación de la Propuesta&lt;&#x2F;h2&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;05_06_esquema_red_ciudad.png&quot; width=&quot;560&quot; height=&quot;315&quot; alt=&quot;Figura 6. Distribucion de los medidores y concentradores en el distrito&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Figura 6. Distribucion de los medidores y concentradores en el distrito&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Para simular el funcionamiento del sistema se decidió utilizar la distribución que se muestra en la Figura 6. La generación de datos dentro del sistema se hará por medio de &lt;a href=&quot;https:&#x2F;&#x2F;www.toptal.com&#x2F;nodejs&#x2F;programacion-visual-con-node-red-conectando-el-internet-de-las-cosas-con-facilidad&quot;&gt;Node-RED&lt;&#x2F;a&gt;. El flow construido se muestra a continuación y está disponible en el &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;jlrcolmenares&#x2F;Water-Metering-System&quot;&gt;siguiente repositorio&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;05_07_node_red_schema.png&quot; width=&quot;560&quot; height=&quot;315&quot; alt=&quot;Figura 7. Flow de Node Red para la generación de datos&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Figura 7. Flow de Node Red para la generación de datos&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Entonces, sabiendo la distribución de los medidores y cómo se generarán los datos, la tabla de logs quedará de la siguiente manera:&lt;&#x2F;p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;log_id&lt;&#x2F;th&gt;&lt;th&gt;log_date&lt;&#x2F;th&gt;&lt;th&gt;slave_name&lt;&#x2F;th&gt;&lt;th&gt;master_name&lt;&#x2F;th&gt;&lt;th&gt;district_name&lt;&#x2F;th&gt;&lt;th&gt;water_amount&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;1&lt;&#x2F;td&gt;&lt;td&gt;2020-06-01 10:05:00&lt;&#x2F;td&gt;&lt;td&gt;slave1&lt;&#x2F;td&gt;&lt;td&gt;master1&lt;&#x2F;td&gt;&lt;td&gt;distric1&lt;&#x2F;td&gt;&lt;td&gt;300&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;2&lt;&#x2F;td&gt;&lt;td&gt;2020-06-01 10:15:00&lt;&#x2F;td&gt;&lt;td&gt;slave3&lt;&#x2F;td&gt;&lt;td&gt;master2&lt;&#x2F;td&gt;&lt;td&gt;distric2&lt;&#x2F;td&gt;&lt;td&gt;200&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;3&lt;&#x2F;td&gt;&lt;td&gt;2020-06-01 10:25:00&lt;&#x2F;td&gt;&lt;td&gt;slave2&lt;&#x2F;td&gt;&lt;td&gt;master1&lt;&#x2F;td&gt;&lt;td&gt;distric1&lt;&#x2F;td&gt;&lt;td&gt;400&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;4&lt;&#x2F;td&gt;&lt;td&gt;2020-06-01 10:35:00&lt;&#x2F;td&gt;&lt;td&gt;slave1&lt;&#x2F;td&gt;&lt;td&gt;master1&lt;&#x2F;td&gt;&lt;td&gt;distric1&lt;&#x2F;td&gt;&lt;td&gt;230&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;5&lt;&#x2F;td&gt;&lt;td&gt;2020-06-01 10:45:00&lt;&#x2F;td&gt;&lt;td&gt;slave3&lt;&#x2F;td&gt;&lt;td&gt;master2&lt;&#x2F;td&gt;&lt;td&gt;distric2&lt;&#x2F;td&gt;&lt;td&gt;110&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;p&gt;Con las condiciones antes mencionadas se estableció en entorno de simulación, el cual puede verse mucho mejor en el vídeo que presento al principio de este articulo.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;7-conclusiones&quot;&gt;7. Conclusiones&lt;&#x2F;h2&gt;
+&lt;p&gt;Desarrollar este proyecto fue una tarea muy interesante que permite tener una idea de todas las posibilidades que nos brinda una herramienta como Grafana. Sin embargo, quedan algunas cosas pendientes o posibles mejoras&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Almacenamiento (PostgreSQL)&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Trabajar con entidades separadas en vez de escribir en una nica tabla.&lt;&#x2F;li&gt;
+&lt;li&gt;Escribir directamente en la tablas de cada una de las entidades&lt;&#x2F;li&gt;
+&lt;li&gt;Crear el querie que me produzcan la tabla logs.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Generación de Datos (Node-RED)&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Simplificar la forma en que se escriben los datos en la bases de datos.&lt;&#x2F;li&gt;
+&lt;li&gt;Utilizar nodos JOIN para unir las lecturas generadas por cada uno de los medidores y escribir en la base de datos una nica vez&lt;&#x2F;li&gt;
+&lt;li&gt;Generación de datos más realistas. Que sigan un patrón o una función.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Visualización (Grafana)&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Generar alarmas dentro de Grafana, para que aparezcan en el tablero&lt;&#x2F;li&gt;
+&lt;li&gt;Descargar los datos de un usuario por medio de grafana.&lt;&#x2F;li&gt;
+&lt;li&gt;Utilizar fuentes de datos adicionales&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;Espero que este archivo haya sido de su interés y quedo atento a sus comentarios. Saludos&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Cómo configurar Docker para tus proyectos</title>
+          <pubDate>Thu, 18 Jun 2020 00:00:00 +0000</pubDate>
+          <author>Unknown</author>
+          <link>https://jlrcolmenares.github.io/posts/04-como-configurar-docker-para-tus-proyectos/</link>
+          <guid>https://jlrcolmenares.github.io/posts/04-como-configurar-docker-para-tus-proyectos/</guid>
+          <description xml:base="https://jlrcolmenares.github.io/posts/04-como-configurar-docker-para-tus-proyectos/">&lt;div style=&quot;background-color: lightblue; padding: 2px; border-radius: 5px; display: flex; align-items: center;&quot;&gt;  
+  &lt;div style=&quot;flex: 0 0 24px; margin-right: 10px;&quot;&gt;
+    &lt;img src=&quot;&#x2F;icons&#x2F;info-icon.png&quot; alt=&quot;Info&quot; style=&quot;width: 100%; height: auto;&quot;&gt;
+  &lt;&#x2F;div&gt;
+  &lt;div style=&quot;flex: 1;&quot;&gt;
+    &lt;p&gt;
+      Artículo publicado originalmente en el blog de Platzi y mi antiguo blog de Wordpress.
+    &lt;&#x2F;p&gt;
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Hola amigues! &lt;a href=&quot;https:&#x2F;&#x2F;platzi.com&#x2F;tutoriales&#x2F;1272-sql-mysql&#x2F;5749-instalar-mysql-usando-docker-super-sencillo&#x2F;&quot;&gt;Hoy&lt;&#x2F;a&gt; les traigo un brevísimo tutorial acerca de una de las herramientas más utilizadas para probar paquetes o librería sin necesidad de instalarlas directamente en tu computadora o de cambiar de sistema operativo. &lt;&#x2F;p&gt;
+&lt;p&gt;Estoy hablando de Docker, un proyecto de código abierto que automatiza el despliegue de aplicaciones dentro de contenedores.&lt;&#x2F;p&gt;
+&lt;p&gt;En el caso de este artículo: Vamos a correr un contenedor de MySQL server.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;docker&quot;&gt;Docker&lt;&#x2F;h2&gt;
+&lt;p&gt;A continuación le presento 2 opciones para instalar Docker:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Docker Desktop: que corre en Windows 10 Versión Professional o Enterprise. Pueden encontrar el tutorial para la instalación &lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=BK-C2RofmTE&quot;&gt;aquí&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Docker Toolbox: que corre en cualquier versión de Windows con WSL. Aquí el tutorial de instalación: &lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=HhpTsIcNAXo&quot;&gt;aquí&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;Los tutoriales no son de mi autoría, pero los revisé y tienen el paso a paso que hace falta para completar la instalación&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;mysql&quot;&gt;MySQL&lt;&#x2F;h2&gt;
+&lt;p&gt;Una vez instalado Docker lo que resta es instalar el contenedor de MySQL para poder empezar a configurar una base de datos con el CLI. (Aquí tienen la documentación oficial aquí). Les explico brevemente los pasos que yo realicé:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Lo primero es descargar la imagen en tu Docker &lt;code&gt;docker pull mysql&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;El siguiente comando construye un contenedor llamado &lt;em&gt;‘mysql-platzi’&lt;&#x2F;em&gt; con la versión más reciente (mysql:latest) y le asigna al usuario root del sistema, la clave ‘password’: &lt;code&gt;docker run --name mysql-library -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 -d mysql:latest&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Luego puedes acceder a la línea de comando del contenedor de MySQL usando. &lt;code&gt;docker exec -it mysql-platzi bash&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;Finalmente, se ingresa base de datos por medio del siguiente comando &lt;code&gt;mysql -u root -ppassword&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;Y listo! Por medio de estos pasos ya tiene una instancia de MySQL que puedes utilizar en tus proyectos.&lt;&#x2F;p&gt;
+&lt;p&gt;Espero que les haya sido de utilidad. Nos vemos!&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Tutorial de PowerBi</title>
+          <pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate>
+          <author>Unknown</author>
+          <link>https://jlrcolmenares.github.io/posts/06-tutorial-de-power-bi/</link>
+          <guid>https://jlrcolmenares.github.io/posts/06-tutorial-de-power-bi/</guid>
+          <description xml:base="https://jlrcolmenares.github.io/posts/06-tutorial-de-power-bi/">&lt;p&gt;En 2020, di inicio a mi formación como analista de datos. Adoptando la sabia enseñanza de Richard Feynman, quien afirmó: &#x27;Si no puedes explicar algo de forma simple, es que no lo entiendes lo suficiente&#x27;, me propuse crear este tutorial. Esta frase se convirtió en mi guía, y me impulsó a clarificar conceptos complejos y presentarlos de manera accesible cada vez que podía.&lt;&#x2F;p&gt;
+&lt;div  style=&quot;display: flex; justify-content: center;&quot;&gt;
+    &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;G4f099Ypw9w?si=R0W747N3gp7JRiru&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; referrerpolicy=&quot;strict-origin-when-cross-origin&quot; allowfullscreen&gt;&lt;&#x2F;iframe&gt;   
+&lt;&#x2F;div&gt;
+
+</description>
+      </item>
+      <item>
+          <title>Que son los Sistemas de Información Geográfica</title>
+          <pubDate>Tue, 18 Feb 2020 00:00:00 +0000</pubDate>
+          <author>Unknown</author>
+          <link>https://jlrcolmenares.github.io/posts/07-sistemas-informacion-geografica/</link>
+          <guid>https://jlrcolmenares.github.io/posts/07-sistemas-informacion-geografica/</guid>
+          <description xml:base="https://jlrcolmenares.github.io/posts/07-sistemas-informacion-geografica/">&lt;div style=&quot;background-color: lightblue; padding: 2px; border-radius: 5px; display: flex; align-items: center;&quot;&gt;  
+  &lt;div style=&quot;flex: 0 0 24px; margin-right: 10px;&quot;&gt;
+    &lt;img src=&quot;&#x2F;icons&#x2F;info-icon.png&quot; alt=&quot;Info&quot; style=&quot;width: 100%; height: auto;&quot;&gt;
+  &lt;&#x2F;div&gt;
+  &lt;div style=&quot;flex: 1;&quot;&gt;
+    &lt;p&gt;
+      Artículo publicado originalmente en mi antiguo blog de WordPress.
+    &lt;&#x2F;p&gt;
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Una de las materias del segundo cuatrimestre de mi máster se llama &lt;em&gt;Aspectos Transversales de las Smart Cities&lt;&#x2F;em&gt;. La idea de la materia es tratar alguno de los conceptos e ideas que se aplican a las soluciones y tecnologías «smart» así como entender como se integran entre sí.&lt;&#x2F;p&gt;
+&lt;p&gt;La última parte de la asignatura invita a los estudiantes a que hagan una presentación sobre un tema que les interese y que tenga que ver con Smart Cities. En mi caso, decidí hablar sobre los Geographic Information Systems o GIS, ya que está dentro de mi área de interés y además estos sistemas no fueron tratados durante el máster, por lo que pareció buena ídea presentarselos a mis compañeros.&lt;&#x2F;p&gt;
+&lt;p&gt;Así que el día de hoy les traigo la presentación que preparé para ese día.&lt;&#x2F;p&gt;
+&lt;div  style=&quot;display: flex; justify-content: center;&quot;&gt;
+    &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;rEzhgRLzSDA?si=KRUwytBlshTC8pwZ&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; referrerpolicy=&quot;strict-origin-when-cross-origin&quot; allowfullscreen&gt;&lt;&#x2F;iframe&gt;   
+&lt;&#x2F;div&gt;
+
+&lt;p&gt;Todavía me restan por publicar algunas cosas del segundo cuatrimestre del máster (y de las cuales tengo mucho mejor respaldo porque todo lo tenía que compartir a distancia). Estén atentos a nuevas publicaciones.&lt;&#x2F;p&gt;
+&lt;p&gt;Nos vemos pronto!&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>10 lecciones para cerrar la década de los 2010s</title>
+          <pubDate>Tue, 31 Dec 2019 00:00:00 +0000</pubDate>
+          <author>Unknown</author>
+          <link>https://jlrcolmenares.github.io/posts/08-reflexiones-dosmildiez/</link>
+          <guid>https://jlrcolmenares.github.io/posts/08-reflexiones-dosmildiez/</guid>
+          <description xml:base="https://jlrcolmenares.github.io/posts/08-reflexiones-dosmildiez/">&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;08_01_rio_guadalquivir.jpg&quot; width=&quot;560&quot; height=&quot;315&quot; alt=&quot;Atardecer sobre el Rio Guadalquivir&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Atardecer sobre el Rio Guadalquivir&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Hubo un momento en esta década en el que me di cuenta que no podía lidiar con la inmensa cantidad de compromisos y objetivos que nos inculcan desde jóvenes, y lo que me propuse fue ser fiel al menos a un lema: &lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Intentaré vivir mi vida sin acumular remordimientos.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Al comienzo me sentía egoísta, pero con el tiempo fui cayendo en cuenta que tenía sentido y aprendí algunas cosas:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;La vida no es justa, así que deja de buscar culpables.&lt;&#x2F;li&gt;
+&lt;li&gt;No hay grandeza en el sufrimiento. No te van a dar un premio por pasarla mal.&lt;&#x2F;li&gt;
+&lt;li&gt;Eres responsable de tus decisiones y de sus consecuencias y de gestionar como te sientes luego de haberlas tomado.&lt;&#x2F;li&gt;
+&lt;li&gt;Ayuda a otros. La vida no es justa y tú eres afortunado por el solo hecho de tener tiempo pensar que no es justa.&lt;&#x2F;li&gt;
+&lt;li&gt;El tiempo invertido en las personas que quieres es el mejor tiempo del mundo. Procura estar con personas que lo comprendan&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;em&gt;&amp;quot;Nadie controla su propia vida, lo más que puedes hacer es decidir ser controlado por personas que te quieran&amp;quot;&lt;&#x2F;em&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;Dile a las personas que las amas, que las quieres, en el momento que lo sientes.&lt;&#x2F;li&gt;
+&lt;li&gt;Identifica lo que te hace feliz y hazte consciente de cuando te sientes pleno, porque eso pasará.&lt;&#x2F;li&gt;
+&lt;li&gt;Está bien estar triste y no sentirse bien, pero recuerda que eso también pasará.&lt;&#x2F;li&gt;
+&lt;li&gt;Eres incapaz de conocer la toda la historia personal de un individuo así que no sean tan rápido en juzgar. Busca conocer y entender y luego decide si estás de acuerdo o no con esa persona.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;Siempre me han gustado las ciudades con ríos, porque me recuerdan a Heráclito cuando dice &amp;quot;&lt;strong&gt;Ningún hombre puede cruzar el mismo río dos veces, porque ni el hombre ni el agua serán los mismos&lt;&#x2F;strong&gt;&amp;quot;.&lt;&#x2F;p&gt;
+&lt;p&gt;Espero que para ustedes este nuevo año les traigan muchos cambios y que si nos volvemos a encontrar ninguno de nosotros seamos los mismos.&lt;&#x2F;p&gt;
+&lt;p&gt;Por último, recuerden agradecer (a quien crean o a ustedes mismos) por todo lo que les ha pasado y han logrado este año. Feliz 2020. Un abrazo. Que la pases muy bien en tu pueblo con tu familia&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Mi experiencia en una Startup Weekend</title>
+          <pubDate>Sat, 21 Dec 2019 00:00:00 +0000</pubDate>
+          <author>Unknown</author>
+          <link>https://jlrcolmenares.github.io/posts/03-que-pasa-en-una-startup-weekend/</link>
+          <guid>https://jlrcolmenares.github.io/posts/03-que-pasa-en-una-startup-weekend/</guid>
+          <description xml:base="https://jlrcolmenares.github.io/posts/03-que-pasa-en-una-startup-weekend/">&lt;div style=&quot;background-color: lightblue; padding: 2px; border-radius: 5px; display: flex; align-items: center;&quot;&gt;  
+  &lt;div style=&quot;flex: 0 0 24px; margin-right: 10px;&quot;&gt;
+    &lt;img src=&quot;&#x2F;icons&#x2F;info-icon.png&quot; alt=&quot;Info&quot; style=&quot;width: 100%; height: auto;&quot;&gt;
+  &lt;&#x2F;div&gt;
+  &lt;div style=&quot;flex: 1;&quot;&gt;
+    &lt;p&gt;
+      Artículo publicado originalmente como artículo en Linkedin.
+    &lt;&#x2F;p&gt;
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.linkedin.com&#x2F;pulse&#x2F;qu%25C3%25A9-pasa-en-una-startup-weekend-jos%25C3%25A9-luis-colmenares&#x2F;?trackingId=KbNwRpDhT0q%2FtX6JASmg4g%3D%3D&quot;&gt;El pasado fin de semana&lt;&#x2F;a&gt; tuve la oportunidad de participar junto a un maravilloso grupo de personas en el Startup Weekend de la ciudad de Sevilla, una deuda que tenía pendiente conmigo mismo, desde que se organizó en Caracas hace más de 3 años. Ese fin de semana me dejó una resaca startupera muy sabrosa y hoy quiero contarles sobre algunas cosas que viví y aprendí.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;confiar&quot;&gt;Confiar&lt;&#x2F;h2&gt;
+&lt;p&gt;Muchas veces las ideas más locas que tenemos se quedan sólo en nuestras cabezas o, si tenemos suerte, se la podemos contar a un grupo de amigos de mucha confianza. Pararse frente a un público desconocido y hablarles sobre una idea no es algo común, mucho menos si decides estudiar ingeniería.&lt;&#x2F;p&gt;
+&lt;p&gt;Esa es la primera actividad práctica que pueden hacer todos los participantes del SW: pararse frente a un público y decir &lt;strong&gt;&amp;quot;yo veo y creo en esto&amp;quot;&lt;&#x2F;strong&gt;. No es sencillo, porque a muchas personas mientras crecen se les inculca el miedo y la vergüenza (palabras que no aportan en nada a la felicidad de un individuo). Por suerte, los organizadores son personas maravillosas, y hacen de esta experiencia un juego, en el que todos participan sin temor.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;transmitir&quot;&gt;Transmitir&lt;&#x2F;h2&gt;
+&lt;p&gt;Hay un pequeño extracto de sabiduría que me llegó durante mi primer empleo:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Entre lo que pienso, lo que quiero decir, lo que creo decir, lo que digo, lo que quieres oír, lo que oyes, lo que crees entender, lo que quieres entender y lo que entiendes, existen 9 posibilidades de no entendernos&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Estar seguro de que podía entenderme realmente con mi interlocutor me ayudó muchísimo a nivel laboral (y demostró ser muy útil también a nivel sentimental), pero en el SW el quid del asunto era otro: &lt;em&gt;la eficacia&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Carlos, Jaime y Alfredo, los facilitadores y speakers de este fin de semana, presentaron una cantidad de estrategias orientadas a sintetizar información y a emocionar por medio de un &lt;strong&gt;Pitch&lt;&#x2F;strong&gt;. Poderosa palabra usada en los entornos de Emprendimiento que se refiere a la presentación concisa de una idea frente a un jurado, para convencerlos de que inviertan en tu proyecto.&lt;&#x2F;p&gt;
+&lt;p&gt;De este aspecto podría resumir lo siguiente: lo que comunicas &lt;strong&gt;(contenido)&lt;&#x2F;strong&gt; es tan o más importante que la forma en cómo lo comunicas &lt;strong&gt;(storytelling)&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;escuchar&quot;&gt;Escuchar&lt;&#x2F;h2&gt;
+&lt;p&gt;Seguramente en algún momento de su vida se encontraron con un maestro: una persona que les hizo las preguntas correctas que les hacían falta para crecer y aprender. Para mi eso es un maestro, alguien que, como Sócrates, que te hace las preguntas correctas para que descubras tus propias verdades.&lt;&#x2F;p&gt;
+&lt;p&gt;A pesar de su amplia y probada experiencia en múltiples áreas, cada uno de los mentores se acercó con humildad a cada equipo para hacerle preguntas que consideraba pertinentes, y luego, comentarios que los ayudaran a mejorar su idea.&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Un proyecto de Instrumentación en la vida real</title>
+          <pubDate>Sun, 09 Dec 2018 00:00:00 +0000</pubDate>
+          <author>Unknown</author>
+          <link>https://jlrcolmenares.github.io/posts/02-una-anecdota-sobre-instrumentacion/</link>
+          <guid>https://jlrcolmenares.github.io/posts/02-una-anecdota-sobre-instrumentacion/</guid>
+          <description xml:base="https://jlrcolmenares.github.io/posts/02-una-anecdota-sobre-instrumentacion/">&lt;div style=&quot;background-color: lightblue; padding: 2px; border-radius: 5px; display: flex; align-items: center;&quot;&gt;  
+  &lt;div style=&quot;flex: 0 0 24px; margin-right: 10px;&quot;&gt;
+    &lt;img src=&quot;&#x2F;icons&#x2F;info-icon.png&quot; alt=&quot;Info&quot; style=&quot;width: 100%; height: auto;&quot;&gt;
+  &lt;&#x2F;div&gt;
+  &lt;div style=&quot;flex: 1;&quot;&gt;
+    &lt;p&gt;
+      Artículo publicado originalmente en mi LinkedIn.
+    &lt;&#x2F;p&gt;
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Durante mi formación profesional una de las materias de mayor importancia fue &lt;a href=&quot;https:&#x2F;&#x2F;www.linkedin.com&#x2F;pulse&#x2F;una-an%25C3%25A9cdota-sobre-instrumentaci%25C3%25B3n-jos%25C3%25A9-luis-colmenares&#x2F;?trackingId=cuYAvutJR1OZ%2BdKUOvilzA%3D%3D&quot;&gt;Instrumentación Industrial&lt;&#x2F;a&gt;. En dicha materia, nos instruyen sobre los principios físicos usados para la medición de diferentes variables. Poco a poco, se estudia sobre la medición de nivel, flujo, presión, temperatura, humedad, entre otros. Así mismo sobre la selección de instrumentos y elaboración de diagramas P&amp;amp;IDs.&lt;&#x2F;p&gt;
+&lt;p&gt;Recuerdo que en esa materia la selección de los instrumentos de medición se pintaba como un proceso lineal: existen una cantidad de variables a considerar, una vez sopesadas, se elegía el mejor elemento de medición, listo. Gracioso pensar en cuan distinta es la vida universitaria al ejercicio profesional...&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;que-pasa-en-la-vida-real&quot;&gt;Qué pasa en la vida real&lt;&#x2F;h2&gt;
+&lt;p&gt;Mis experiencias laborales más satisfactorias han sido cuando me involucré en los proyectos desde sus fases iniciales, sin embargo, éstas no han sido las más comunes. En la mayoría de las oportunidades, mi labor se ha basado en entender un proyecto a medio ejecutar, corregir sus errores, y llevarlo a su culminación.&lt;&#x2F;p&gt;
+&lt;p&gt;En mi más reciente proyecto, se me entregó un sensor ultrasónico y me indicaron:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“Este es el sensor que vamos a utilizar para medir el nivel de una tanque de 30 mil litros, el cual contendrá aceite que será agitado constantemente. No tenemos fondos para comprar otro ni para hacer modificaciones al tanque, y la directiva necesita eso funcionando lo más pronto posible”.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Con esas indicaciones empecé a investigar y hoy les contaré lo que aprendí en el proceso de solucionar este reto.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;que-queremos-medir&quot;&gt;¿Qué queremos medir?&lt;&#x2F;h2&gt;
+&lt;p&gt;El aceite de palma es el segundo aceite de mayor producción a nivel mundial. El aceite de palma se obtiene por extracción mecánica de la fruta de la &lt;em&gt;Elaeis guineensis&lt;&#x2F;em&gt;, y está conformado por dos fracciones principales, la estearina y la oleína.&lt;&#x2F;p&gt;
+&lt;p&gt;En la industria galletera, el aceite más utilizado es la oleína, el cual es un líquido viscoso y con densidad de alrededor 890 Kg&#x2F;m³. La mejores prácticas para la manipulación de aceites comestibles indican que estos deben estar agitados y ser calentados para evitar la formación de sólidos y garantizar la homogeneidad del producto. Asimismo, se debe evitar el contacto de materiales extraños con el aceite, ya que esto puede ocasionar la oxidación del producto, causando enranciamiento del aceite, lo cual afecta en la calidad y características físicas de las galletas fabricadas con dicho aceite.&lt;&#x2F;p&gt;
+&lt;p&gt;Sabiendo esto les pregunto &lt;strong&gt;¿Qué principio de medición utilizarían ustedes para conocer el nivel de fluido con estas características?&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;que-instrumento-tenemos-disponible&quot;&gt;¿Qué instrumento tenemos disponible?&lt;&#x2F;h2&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;02_01_pepper_fuchs.png&quot; width=&quot;380&quot; height=&quot;150&quot; alt=&quot;Sensor de Nivel Pepperl+Fuchs&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Sensor de Nivel Pepperl+Fuchs&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Previo a mi llegada a la empresa, el equipo el encargado de la planificación y ejecución del proyecto seleccionó un sensor de nivel ultrasónico &lt;strong&gt;Pepperl+Fuchs, Modelo UB4000-F42-I-V15&lt;&#x2F;strong&gt; el cual puede observarse en la imagen superior. Dicho sensor sería colocado en una toma con rosca NPT de 2&amp;quot; que se encontraba en la cima del tanque.&lt;&#x2F;p&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;02_02_peper_mal_acople.jpeg&quot; width=&quot;380&quot; height=&quot;150&quot; alt=&quot;Sensor de Nivel mal instalado&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Sensor de Nivel mal instalado&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;La fotografía superior muestra la base que el equipo inicial había construido para el sensor ultrasónico. Esta base no podía funcionar, ya que el círculo blanco que se observa en la imagen al comienzo de esta sección es la membrana por la cual pasa el haz ultrasónico, por lo tanto, debía estar orientada hacía el interior de la rosca.&lt;&#x2F;p&gt;
+&lt;p&gt;Otra complicación, era la banda muerta del sensor, la cual es de 24 cm. A nivel productivo, perder 24 cm en el tope del tanque, significa perder más de 4000 litros de aceite, esa cantidad de fluido podía ser utilizada por casi 2 días de producción&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Perder 24 cm en el tope del tanque significaba perder más de 4000 litros de aceite, el cual podía ser utilizado para la producción de galletas por 2 días&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Como vemos, la zona muerta del sensor era una problema importante, puesto que era una limitación a nivel de hardware y, como comenté anteriormente, la inversión en un nuevo sensor estaba descartada. La solución para este problema debía ser elevar el sensor de la cima del tanque por más de 30 cm.&lt;&#x2F;p&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;02_03_tanque_esquema_1.png&quot; width=&quot;380&quot; height=&quot;150&quot; alt=&quot;Instalación inicial para la medición de aceite&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Instalación inicial para la medición de aceite&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;La imagen anterior muestra la primera solución que diseñé, la cual consistió en elevar el sensor 30 cm manteniendo la toma roscada en la cima del tanque. &lt;strong&gt;Bajo este esquema el sensor daba lecturas correctas siempre y cuando no estuviera agitado&lt;&#x2F;strong&gt;, ya que cuando se agitaba las lecturas eras inestables o se perdían por completo. Para entender que estaba ocurriendo debemos revisar el principio de funcionamiento de lo sensores ultrasónicos.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;principio-de-funcionamiento-de-sensores-ultrasonicos&quot;&gt;Principio de funcionamiento de sensores ultrasónicos&lt;&#x2F;h2&gt;
+&lt;div  style=&quot;display: flex; justify-content: center;&quot;&gt;
+    &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;tvPRriWINIE?si=8ZbqJ_giPWdDj33K&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; referrerpolicy=&quot;strict-origin-when-cross-origin&quot; allowfullscreen&gt;&lt;&#x2F;iframe&gt;   
+&lt;&#x2F;div&gt;
+
+&lt;p&gt;La diferencia de tiempo entre el momento en el que se emite una señal sonora y el tiempo en que se recibe se conoce como eco, este es el principio de funcionamiento de los sensores ultrasónicos. &lt;strong&gt;Cada sensor es un transductor&lt;&#x2F;strong&gt;, donde un cristal piezo-eléctrico convierte una señal eléctrica en un haz sónico. El haz viaja hasta reflejarse con la superficie del objeto a medir y se refleja de regreso al transductor, el cual reconoce el pulso de retorno y, dependiendo de la configuración, lo convierte en una señal de analógica de 4 a 20 mA.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;La diferencia de tiempo entre el momento en el que se emite una señal sonora y el tiempo en que se recibe se conoce como eco, este es el principio de funcionamiento de los sensores ultrasónicos&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;02_04_distorsion_ultrasonicos.png&quot; width=&quot;380&quot; height=&quot;150&quot; alt=&quot;Distorción en instrumentos ultrasónicos&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Distorción en instrumentos ultrasónicos&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;&lt;strong&gt;Los sensores ultrasónicos son muy sensibles a perturbaciones y a ecos ajenos al sistema del que forman parte&lt;&#x2F;strong&gt;. Asimismo, pueden no ser apropiados cuando se trabaja con objetos irregulares o agitados, ya que estos objetos suelen distorsionar el haz sónico evitando así que puedan reflejarse de regreso al transductor.&lt;&#x2F;p&gt;
+&lt;p&gt;Elevar el sensor 30cm desde la cima del tanque no funcionó, ya que en mi caso, las distorsiones ocasionadas por la agitación del aceite, evitaban que el haz de retorno pudiera llegar hasta el sensor ya que rebotaba en la tubería. Investigaciones posteriores me llevaron a la que sería la solución definitiva a mi problema, el tubo de estabilización.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;tubo-de-estabilizacion-o-stilling-tube&quot;&gt;Tubo de Estabilización o &#x27;Stilling Tube&#x27;&lt;&#x2F;h2&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;02_05_tubo_estabiliza.png&quot; width=&quot;280&quot; height=&quot;150&quot; alt=&quot;Esquema de Tubo de Estabilización&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Esquema de Tubo de Estabilización&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Un tubo de estabilización es una solución utilizada cuando se está midiendo el nivel en tanques agitados. Funciona confinando a un área pequeña y poco susceptible a la agitación el volumen del fluido, creando una superficie plana. Por el principio de vasos comunicantes, si el fluido en la partes internas y externas del tubo se encuentra a presión atmosférica, la altura del fluido dentro del tubo de estabilización será la misma que la altura en el resto del tanque.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Por el principio de vasos comunicantes, la altura del fluido dentro del tubo de estabilización será la misma que la altura en el resto del tanque&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;El tubo de estabilización resuelve las inestabilidades de las superficies turbulentas, pero a su vez crea desafíos adicionales para la detección ultrasónica. El tubo utilizado debe ser completamente liso y libre de protuberancias o bordes irregulares, debe tener un diámetro superior a 2 pulgadas, ya que un tuberías estrechas crean un entorno propicio para falsos disparadores. El sensor debe estar centrado y paralelo a las paredes y por último, las gotas de agua pueden condensarse dentro del tubo ocasionando lecturas incorrectas.&lt;&#x2F;p&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;02_06_tanque_esquema_2.png&quot; width=&quot;380&quot; height=&quot;150&quot; alt=&quot;Instalación final para la medición de aceite&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Instalación final para la medición de aceite&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;La solución definitiva se muestra en la figura previa. El único punto disponible para la sujeción tubo elemento era un apertura en la cima del tanque con rosca NPT de 2”. Desde el principio, sabía que la unión roscada sería el principal obstáculo a superar para que el sensor funcionara, principalmente porque la tubería debería instalarse en dos partes, y las uniones roscadas no son lisas por dentro y dejaría un espacio entre las dos secciones de la tubería, lo que crea un lugar donde el sonido se refleja de regreso al sensor.&lt;&#x2F;p&gt;
+&lt;p&gt;Teniendo esto en cuenta, &lt;strong&gt;el material seleccionado para realizar el tubo de estabilización fue PVC&lt;&#x2F;strong&gt;, principalmente por 3 razones.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Económicas&lt;&#x2F;strong&gt;: La tubería PVC para agua fría se consigue fácilmente en el mercado y a un costo relativamente bajo.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Químicas&lt;&#x2F;strong&gt;: El PVC es de los poco materiales que no reacciona químicamente con el aceite comestible, lo cual alarga la vida útil del fluido&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Físicas&lt;&#x2F;strong&gt;: Las tuberías de PVC tienen el índice de rugosidad más bajo del mercado, la cual garantiza que la unión sea lo más lisa posible. Adicionalmente, el tubo es lo suficientemente grueso como para soportar rosca, lo que me permitía instalarlos en la toma roscada disponibles.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Por medio de un proceso iterativo de roscar, lijar y limpiar las secciones de la tubería logramos que la unión fuera completamente lisa y el sensor regresara lectura acordes a los cambio del altura del fluido dentro del tanque, resolviendo así la complicaciones de manera definitiva.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;aprendizajes&quot;&gt;Aprendizajes&lt;&#x2F;h2&gt;
+&lt;p&gt;Como verán, es vital comprender el proceso que se quiere instrumentar para poder seleccionar el sensor adecuado, el no hacerlo, puede ocasionar complicaciones importantes. En mi caso, agradezco que esto me haya pasado y haber tenido la oportunidad de resolverlo, y así aprender mucho más sobre instrumentación.&lt;&#x2F;p&gt;
+&lt;p&gt;En su experiencia ¿Qué comentarios tienen acerca de esta aplicación? ¿Le ha pasado algo similar en su trabajo?&lt;&#x2F;p&gt;
+&lt;p&gt;A continuación la imagen de la solución diseñada. Gracias por leerme el día de hoy. Saludos&lt;&#x2F;p&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;02_07_peper_instalado.jpeg&quot; width=&quot;380&quot; height=&quot;150&quot; alt=&quot;Vista exterior del sensor instalado en el tanque&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Vista exterior del sensor instalado en el tanque&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;h2 id=&quot;bibliografia&quot;&gt;Bibliografía&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;cultofsea.com&#x2F;tanker&#x2F;recommended-practices-for-storage-and-transport-of-edible-oils-and-fats&#x2F;&quot;&gt;Storage of Palm Oil&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;milksci.unizar.es&#x2F;bioquimica&#x2F;temas&#x2F;lipidos&#x2F;oxidacion1.html&quot;&gt;Oxidación de Lípidos&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;maxbotix.com&#x2F;blogs&#x2F;blog&#x2F;ultrasonic-sensors-in-pipes&quot;&gt;Tubo de Estabilización&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</description>
+      </item>
+      <item>
+          <title>Las lecciones aprendidas</title>
+          <pubDate>Thu, 11 Oct 2018 00:00:00 +0000</pubDate>
+          <author>Unknown</author>
+          <link>https://jlrcolmenares.github.io/posts/01-rescatando-un-proyecto-de-ingenieria/</link>
+          <guid>https://jlrcolmenares.github.io/posts/01-rescatando-un-proyecto-de-ingenieria/</guid>
+          <description xml:base="https://jlrcolmenares.github.io/posts/01-rescatando-un-proyecto-de-ingenieria/">&lt;div style=&quot;background-color: lightblue; padding: 2px; border-radius: 5px; display: flex; align-items: center;&quot;&gt;  
+  &lt;div style=&quot;flex: 0 0 24px; margin-right: 10px;&quot;&gt;
+    &lt;img src=&quot;&#x2F;icons&#x2F;info-icon.png&quot; alt=&quot;Info&quot; style=&quot;width: 100%; height: auto;&quot;&gt;
+  &lt;&#x2F;div&gt;
+  &lt;div style=&quot;flex: 1;&quot;&gt;
+    &lt;p&gt;
+      Artículo publicado originalmente en mi LinkedIn.
+    &lt;&#x2F;p&gt;
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;&#x2F;br&gt;
+&lt;div style=&quot;display: flex; flex-direction: column; align-items: center; justify-content: center;&quot;&gt;
+    &lt;div&gt;
+        &lt;figure&gt;
+          &lt;img src=&quot;&amp;#x2F;images&amp;#x2F;01_01_proyecto.jpeg&quot; width=&quot;380&quot; height=&quot;150&quot; alt=&quot;Recreando planos para el proyecto&quot;&#x2F;&gt;
+          &lt;figcaption style=&quot;text-align: center; font-style: italic; color: grey;&quot;&gt;Recreando planos para el proyecto&lt;&#x2F;figcaption&gt;
+        &lt;&#x2F;figure&gt;
+      &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.linkedin.com&#x2F;pulse&#x2F;rescatando-un-proyecto-jos%25C3%25A9-luis-colmenares&#x2F;?trackingId=27KZdHjNThW07B5Fnhko4g%3D%3D&quot;&gt;Durante mi carrera profesional&lt;&#x2F;a&gt; he trabajado en varios proyectos y casi todos ellos fueron proyecto que había iniciado otro equipo y que se me ha encomendado a mi la tarea de culminarlos.&lt;&#x2F;p&gt;
+&lt;p&gt;Pero el problema más frecuente con el que me he encontrado es que &lt;strong&gt;El material que dejó el equipo encargado de ejecutar el proyecto, hasta el momento de la transición, es insuficiente&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Esto ocurre porque, usualmente cuando se contrata un proyecto, se define lo que será el producto final, y los recursos a disposición del equipo de proyecto van orientados a resolver rápidamente los obstáculos que se presentan en el camino, sin reparar en todas las acciones que implican superar cada etapa.&lt;&#x2F;p&gt;
+&lt;p&gt;Dentro de la Gerencia de Proyectos existe el término &lt;strong&gt;&#x27;lecciones aprendidas&#x27;&lt;&#x2F;strong&gt;, el cual es el siguiente: &lt;em&gt;Una lección aprendida es todo conocimiento adquirido durante un proyecto el cual muestra &lt;strong&gt;cómo se abordaron o deberían abordarse en el futuro&lt;&#x2F;strong&gt; los eventos del proyecto, a fin de mejorar el desempeño&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Las lecciones aprendidas son las que hacen grandes a la empresas consultoras de ingeniería, finanzas, etc. Todo obstáculo que se presente en la ejecución de un proyecto es una oportunidad de aprendizaje para el equipo y por lo tanto, los obstáculos superados son lecciones aprendidas que deben ser documentadas.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Los obstáculos superados son &#x27;lecciones aprendidas&#x27; que deben ser documentadas&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Durante mi ejercicio profesional, además de dedicarme a ser un ingeniero de proyectos, gran parte de mi labor ha sido encargarme de la Gestión del Conocimiento, el cual es el activo intangible más importante de una organización. Documentar es la clave para rescatar un proyecto y cumplir las necesidades del cliente.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;El Conocimiento es un activo intangible dentro de toda organización&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Tanto el modelo PRINCE2 como el PMBOK tienen contemplados en su flujo de trabajo la documentación de las lecciones aprendidas. Es considerable la cantidad de tiempo que pierde cuando no se lleva una correcta planificación del proyecto y no se contempla el desarrollo de Reportes de Cierre, en donde se indiquen las fases que se ejecutaron para completarlo.&lt;&#x2F;p&gt;
+&lt;p&gt;La buena noticia, es que no importa en qué parte del proyecto se empiece con la documentación, siempre es buena idea hacerla, porque usualmente ahorra tiempo para tareas de mantenimiento preventivo, mantenimiento correctivo, entre otros.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Y a ustedes ¿Les ha tocado culminar un proyecto que estaba a medio ejecutar? ¿Con cuales dificultades se han encontrado? ¿Cómo han logrado superarlas?&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Gracias por tomarse su tiempo y espero que podamos generar una conversación fructífera en torno a este tema. Saludos.&lt;&#x2F;p&gt;
+</description>
+      </item>
+    </channel>
+</rss>
